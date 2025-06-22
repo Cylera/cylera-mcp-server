@@ -6,7 +6,7 @@ For example, you can ask via your favorite LLM application:
 
     Using Cylera, tell me about device with mac address d9:68:3a:ce:3d:e3
 
-And it will respons with something like this:
+And it will respond with something like this:
 
     I'll look up the device information for that MAC address using Cylera.
 
