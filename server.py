@@ -13,7 +13,8 @@ load_dotenv()
 # Initialize the client with your API key
 client = CyleraClient(
     username=os.environ.get("CYLERA_USERNAME"),
-    password=os.environ.get("CYLERA_PASSWORD")
+    password=os.environ.get("CYLERA_PASSWORD"),
+    base_url=os.environ.get("CYLERA_BASE_URL")
 )
 
 

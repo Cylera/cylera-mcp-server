@@ -39,8 +39,13 @@ Currently, the instructions are a little technical - we will look at opportuniti
 
 Step 1 - Create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
 
-    CYLERA_USERNAME="<Your Cylera username>"
-    CYLERA_PASSWORD="<You Cylera password>"
+    CYLERA_BASE_URL=https://partner.us1.cylera.com/" # Or https://partner.uk1.cylera.com/ Or https://partner.demo.cylera.com
+    CYLERA_USERNAME="<Your username>"
+    CYLERA_PASSWORD="<Your password>"
+
+    TEST_CYLERA_BASE_URL="https://partner.demo.cylera.com"
+    TEST_CYLERA_USERNAME="<Your username>"
+    TEST_CYLERA_PASSWORD="<Your password>"
 
 Step 2 - Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
 
@@ -59,6 +64,18 @@ Step 2 - Go to Claude->Settings and Edit Config adding the Cylera MCP Server to 
   }
 }
 ```
+
+## Running unit tests
+
+    uv run pytest
+    ============================= test session starts ==============================
+    platform darwin -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0
+    rootdir: /Users/jasonchambers/repos/cylera-mcp-server
+    configfile: pyproject.toml
+    plugins: anyio-4.9.0, dotenv-0.5.2
+    collected 1 item
+    
+    test_cylera_client.py .                                                  [100%]
 
 ## Supported Cylera Partner API Endpoints
 

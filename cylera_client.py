@@ -33,9 +33,7 @@ class CyleraAPIError(Exception):
 class CyleraClient:
     """Client for interacting with the Cylera Partner API."""
     
-    BASE_URL = "https://partner.us1.cylera.com/"
-    
-    def __init__(self, username: str, password: str, base_url: Optional[str] = None):
+    def __init__(self, username: str, password: str, base_url: str):
         """
         Initialize the Cylera API client.
         
@@ -46,7 +44,7 @@ class CyleraClient:
         """
         self.username = username
         self.password = password
-        self.base_url = base_url or self.BASE_URL
+        self.base_url = base_url 
         self.session = requests.Session()
         self.session.hooks["response"].append(print_request_details)
         self.session.headers.update({

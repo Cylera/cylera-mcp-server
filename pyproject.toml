@@ -10,4 +10,10 @@ dependencies = [
     "pydantic>=2.6.1",
     "fastapi[standard]>=0.115.13",
     "python-dotenv>=1.1.0",
+    "pytest-dotenv>=0.5.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
 ]
