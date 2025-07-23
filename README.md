@@ -85,6 +85,12 @@ The following API endpoints are currently integrated into the MCP server.
 |-------------|-----|-------------|
 | **GET** | `/inventory/device` | Get single device - This endpoint returns details about a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 
+## Currently under development
+
+| HTTP Method | URL | Description |
+|-------------|-----|-------------|
+| **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
+
 ## Unsupported Cylera Partner API Endpoints
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.
@@ -101,4 +107,3 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 | **POST** | `/risk/vulnerability` | Update vulnerability - Updates the status of a specific vulnerability using its UUID. |
 | **POST** | `/threat/threat` | Update threat - Updates the status of a specific threat using its UUID. |
 | **GET** | `/threat/threats` | Get threats - Returns threat information with optional filtering by detection time, MAC address, name, severity, and status. |
-| **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
