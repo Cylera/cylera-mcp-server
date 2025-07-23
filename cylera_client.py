@@ -156,95 +156,47 @@ class CyleraClient:
             )
         except RequestException as e:
             raise CyleraAPIError(f"Request failed: {str(e)}")
-    
-    def get_devices(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        Get a list of devices.
-        
-        Args:
-            params: Optional query parameters for filtering devices
-            
-        Returns:
-            List of device objects
-        """
-        return self._make_request("GET", "/inventory/devices", params=params)
-    
+
+class Inventory:
+    """
+    Helper class for inventory-related endpoints using composition with CyleraClient.
+    """
+    def __init__(self, client: CyleraClient):
+        self.client = client
+
     def get_device(self, device_id: str) -> Dict[str, Any]:
         """
         Get details for a specific device.
         
         Args:
             device_id: The ID of the device to retrieve (MAC address)
-            
+        
         Returns:
             Device object
         """
-        return self._make_request("GET", "/inventory/device", params={"mac_address": device_id})
-    
-    def get_alerts(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        return self.client._make_request("GET", "/inventory/device", params={"mac_address": device_id})
+
+class Utilization:
+    """
+    Helper class for utilization-related endpoints using composition with CyleraClient.
+    """
+    def __init__(self, client: CyleraClient):
+        self.client = client
+
+    def get_procedures(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
-        Get a list of alerts.
+        Get a list of procedures.
         
         Args:
-            params: Optional query parameters for filtering alerts
-            
-        Returns:
-            List of alert objects
-        """
-        return self._make_request("GET", "alerts", params=params)
-    
-    def get_alert(self, alert_id: str) -> Dict[str, Any]:
-        """
-        Get details for a specific alert.
-        
-        Args:
-            alert_id: The ID of the alert to retrieve
-            
-        Returns:
-            Alert object
-        """
-        return self._make_request("GET", f"alerts/{alert_id}")
-    
-    def update_alert_status(
-        self,
-        alert_id: str,
-        status: str,
-        comment: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """
-        Update the status of an alert.
-        
-        Args:
-            alert_id: The ID of the alert to update
-            status: New status for the alert
-            comment: Optional comment for the status update
-            
-        Returns:
-            Updated alert object
-        """
-        data = {"status": status}
-        if comment:
-            data["comment"] = comment
-            
-        return self._make_request("PATCH", f"alerts/{alert_id}", json=data)
-    
-    def get_organizations(self) -> List[Dict[str, Any]]:
-        """
-        Get a list of organizations.
+            params: Optional query parameters for filtering procedures. Possible keys include:
+                - procedure_name: Name of Procedure (will match partial)
+                - accession_number: Accession Number of Procedure
+                - device_uuid: Device UUID
+                - completed_after: Completion Date (format: YYYY/MM/DD)
+                - page: Which page of results to return (int)
+                - page_size: Number of results per page (int, max 100)
         
         Returns:
-            List of organization objects
+            List of procedure objects
         """
-        return self._make_request("GET", "organizations")
-    
-    def get_organization(self, org_id: str) -> Dict[str, Any]:
-        """
-        Get details for a specific organization.
-        
-        Args:
-            org_id: The ID of the organization to retrieve
-            
-        Returns:
-            Organization object
-        """
-        return self._make_request("GET", f"organizations/{org_id}")
+        return self.client._make_request("GET", "/utilization/procedures", params=params)
