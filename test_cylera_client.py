@@ -4,7 +4,7 @@ import json
 from cylera_client import CyleraClient, Inventory, Utilization
 
 class TestGetDevice(unittest.TestCase):
-    def test_get_device_real_instance(self):
+    def test_get_device(self):
         mac_address = "7f:14:22:72:00:e5"
 
         client = CyleraClient(
@@ -20,7 +20,7 @@ class TestGetDevice(unittest.TestCase):
         self.assertIn("aetitle", result["device"])
 
 class TestGetProcedures(unittest.TestCase):
-    def test_get_procedures_real_instance(self):
+    def test_get_procedures(self):
         client = CyleraClient(
             username=os.environ.get("TEST_CYLERA_USERNAME"),
             password=os.environ.get("TEST_CYLERA_PASSWORD"),
@@ -31,6 +31,21 @@ class TestGetProcedures(unittest.TestCase):
         result = utilization.get_procedures(params=params)
         print(json.dumps(result, indent=2))
         self.assertIn("procedures", result)
+
+class TestGetDeviceAttributes(unittest.TestCase):
+    def test_get_device_attributes(self):
+        mac_address = "7f:14:22:72:00:e5"
+
+        client = CyleraClient(
+            username=os.environ.get("TEST_CYLERA_USERNAME"),
+            password=os.environ.get("TEST_CYLERA_PASSWORD"),
+            base_url=os.environ.get("TEST_CYLERA_BASE_URL")
+        )
+        inventory = Inventory(client)
+        result = inventory.get_device_attributes(mac_address)
+
+        print(json.dumps(result, indent=2))
+        self.assertIn("device_attributes", result)
 
 if __name__ == "__main__":
     unittest.main()

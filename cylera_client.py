@@ -176,6 +176,18 @@ class Inventory:
         """
         return self.client._make_request("GET", "/inventory/device", params={"mac_address": device_id})
 
+    def get_device_attributes(self, mac_address: str) -> Dict[str, Any]:
+        """
+        Get attributes for a device.
+        
+        Args:
+            mac_address: MAC address of device
+        
+        Returns:
+            Device attributes object
+        """
+        return self.client._make_request("GET", "/inventory/device_attributes", params={"mac_address": mac_address})
+
 class Utilization:
     """
     Helper class for utilization-related endpoints using composition with CyleraClient.

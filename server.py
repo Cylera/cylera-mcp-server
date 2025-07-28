@@ -66,6 +66,26 @@ def format_procedures(procedures_data) -> list[dict]:
         )
     return list_of_procedures;
 
+def format_device_attributes(device_attributes_data) -> list[dict]:
+    """Format device attributes data into a readable string for MCP tool"""
+    device_attributes = device_attributes_data.get("device_attributes", [])
+    list_of_device_attributes = []
+    for a in device_attributes:
+        list_of_device_attributes.append(
+            {
+                "category": a.get("category", "Unknown"),
+                "created": a.get("created", "Unknown"),
+                "label": a.get("label", "Unknown"),
+                "overridden_by": a.get("overridden_by", "Unknown"),
+                "source_description": a.get("source_description", "Unknown"),
+                "source_name": a.get("source_name", "Unknown"),
+                "value": a.get("value", "Unknown"),
+                "label": a.get("label", "Unknown"),
+                "value": a.get("value", "Unknown"),
+            }
+        )
+    return device_attributes
+
 
 @mcp.tool()
 def get_device(mac_address: str) -> str:
@@ -79,6 +99,12 @@ def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
     procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
     return format_procedures(procedures)
+
+@mcp.tool()
+def get_device_attributes(mac_address: str) -> list[dict]:
+    """Get attributes for a defive by MAC address"""
+    device_attributes = inventory.get_device_attributes(mac_address)
+    return format_device_attributes(device_attributes)
 
 
 if __name__ == "__main__":
