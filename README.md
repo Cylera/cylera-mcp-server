@@ -84,11 +84,6 @@ The following API endpoints are currently integrated into the MCP server.
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
 | **GET** | `/inventory/device` | Get single device - This endpoint returns details about a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
-
-## Currently under development
-
-| HTTP Method | URL | Description |
-|-------------|-----|-------------|
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
 
 ## Unsupported Cylera Partner API Endpoints
