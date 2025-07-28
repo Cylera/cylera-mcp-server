@@ -172,17 +172,17 @@ And it will respond with something like this:
     
 ## Installation
 
-The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download). Other configuration options will be supported in the future.
+The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
 
 Currently, the instructions are a little technical - we will look at opportunities for making the installation easier in the future.
 
-1. Install [Claude Desktop](https://claude.ai/download)
+1. Install [Claude Desktop](https://claude.ai/download) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 2. Install [uv](https://github.com/astral-sh/uv) 
 3. Clone the MCP Server for Cylera
 
 ## Configuration
 
-Step 1 - Create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
+Create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
 
     CYLERA_BASE_URL=https://partner.us1.cylera.com/" # Or https://partner.uk1.cylera.com/ Or https://partner.demo.cylera.com
     CYLERA_USERNAME="<Your username>"
@@ -192,7 +192,9 @@ Step 1 - Create a .env file in the same directory that you cloned the MCP Server
     TEST_CYLERA_USERNAME="<Your username>"
     TEST_CYLERA_PASSWORD="<Your password>"
 
-Step 2 - Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
+### If using Claude Desktop
+
+Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
 
 ```lang=json
 {
@@ -201,10 +203,29 @@ Step 2 - Go to Claude->Settings and Edit Config adding the Cylera MCP Server to 
       "command": "/Users/bill/.local/bin/uv",
       "args": [
         "--directory",
-        "/Users/bill/repos/mcp_cylera_server",
+        "/Users/bill/repos/cylera-mcp-server",
         "run",
         "server.py"
       ]
+    }
+  }
+}
+```
+
+### If using Gemini CLI
+
+In the same directory that you cloned the MCP Server for Cylera, create a file called settings.json with the following contents. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
+
+```
+{
+  "mcpServers": {
+    "Cylera": {
+      "command": "/Users/bill/.local/bin/uv",
+      "args": [
+        "run",
+        "server.py"
+      ],
+      "cwd": "/Users/bill/repos/cylera-mcp-server"
     }
   }
 }
