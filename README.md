@@ -81,6 +81,66 @@ And it will respond with something like this:
     This X-ray system demonstrates consistent, heavy utilization across multiple procedure types, 
     making it a critical piece of equipment for the facility's imaging and interventional capabilities.
 
+### Example 3: Get information about device attributes
+
+Prompt:
+
+    Using cylera, get the attributes for device with MAC address 7f:14:22:72:00:e5
+
+And it will respond with something like this:
+
+    I'll get the attributes for the device with MAC address 7f:14:22:72:00:e5 using Cylera.
+    
+    Here are the attributes for the device with MAC address 7f:14:22:72:00:e5:
+    Device Information
+    
+    Clinical Function: Diagnostic
+    Connection Type: Ethernet
+    Operating System: Windows XP
+    Version: Allura Xper, 8.1.17.2
+    DICOM Implementation: AlluraXper81RIS
+    AETitle: TGXYNUGMIK
+    Serial: 722012-1560
+    TMS Asset Number: 023435
+    
+    Risk Attributes
+    
+    EOL OS: Yes (End-of-life operating system)
+    VLAN Type: Mixed Usage
+    Creates ePHI: Yes
+    Receives ePHI: Yes
+    Stores ePHI: Yes
+    Transmits ePHI: Yes
+    
+    Impact Ratings (All Medium)
+    
+    Data Availability Impact
+    Data Confidentiality Impact
+    Data Integrity Impact
+    Functional Availability Impact
+    Functional Integrity Impact
+    
+    Security Insights
+    
+    Device has been observed sending cleartext PHI
+    Device has sent cleartext ePHI internally
+    Device is running outdated firmware
+    There's low visibility into this device's traffic
+    
+    Services Running
+    
+    FTP Server: Microsoft FTP Service (Port 21)
+    MySQL Server: Yes
+    RDP Server: Yes
+    
+    DICOM Functionality
+    
+    This device sends DICOM C-STORE requests
+    
+    This appears to be a Philips Allura Xper diagnostic imaging system running on
+    Windows XP with several security concerns including end-of-life OS, cleartext
+    PHI transmission, and outdated firmware.
+    
 ## Installation
 
 The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download). Other configuration options will be supported in the future.
@@ -141,6 +201,7 @@ The following API endpoints are currently integrated into the MCP server.
 |-------------|-----|-------------|
 | **GET** | `/inventory/device` | Get single device - This endpoint returns details about a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
+| **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 
 ## Unsupported Cylera Partner API Endpoints
 
@@ -149,7 +210,6 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
 | **DELETE** | `/inventory/device_attributes` | Delete custom attribute for a device - This endpoint deletes a single custom attribute for a single device. If the provided parameters don't match an existing attribute, then nothing will be deleted. Note that if the attribute is a Cylera-created attribute, it won't be deleted. |
-| **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
 | **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
