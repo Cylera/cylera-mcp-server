@@ -140,6 +140,35 @@ And it will respond with something like this:
     This appears to be a Philips Allura Xper diagnostic imaging system running on
     Windows XP with several security concerns including end-of-life OS, cleartext
     PHI transmission, and outdated firmware.
+
+### Example 4: Ask Cylera if a device stores ePHI
+
+Prompt:
+
+    Does the device with MAC address 7f:14:22:72:00:e5 store ePHI?
+
+And it will respond with something like this:
+
+    I'll look up the device with that MAC address to check if it stores ePHI 
+    (electronic Protected Health Information).
+
+    Let me get more detailed attributes for this device to see if there's specific
+    information about ePHI storage.
+
+    Yes, the device with MAC address 7f:14:22:72:00:e5 does store ePHI. This is a
+    Philips Allura Xper X-Ray System, and according to the device attributes, it has
+    the "Stores ePHI" attribute set to true.
+
+    Additionally, this device:
+
+    Creates ePHI (generates patient health information through X-ray imaging)
+    Receives ePHI (gets patient data from other systems)
+    Transmits ePHI (sends patient data to other systems)
+    Has been observed sending cleartext PHI both internally and externally
+
+    This X-ray machine is actively involved in handling electronic Protected Health
+    Information as part of its diagnostic imaging function in the healthcare
+    facility.
     
 ## Installation
 
