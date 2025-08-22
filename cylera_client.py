@@ -176,6 +176,77 @@ class Inventory:
         """
         return self.client._make_request("GET", "/inventory/device", params={"mac_address": device_id})
 
+    def get_devices(
+        self,
+        aetitle: Optional[str] = None,
+        device_class: Optional[str] = None,
+        hostname: Optional[str] = None,
+        ip_address: Optional[str] = None,
+        mac_address: Optional[str] = None,
+        model: Optional[str] = None,
+        os: Optional[str] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+        serial_number: Optional[str] = None,
+        since_last_seen: Optional[int] = None,
+        device_type: Optional[str] = None,
+        vendor: Optional[str] = None,
+        first_seen_before: Optional[int] = None,
+        first_seen_after: Optional[int] = None,
+        last_seen_before: Optional[int] = None,
+        last_seen_after: Optional[int] = None,
+        attribute_label: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get a list of devices.
+
+        Args:
+            aetitle: Complete AE Title of device
+            device_class: Device class (e.g. Medical)
+            hostname: Complete hostname of device
+            ip_address: Partial or complete IP or subnet
+            mac_address: Partial or complete MAC address
+            model: Device model
+            os: Device operating system
+            page: Controls which page of results to return
+            page_size: Controls number of results in each response. Max 100.
+            serial_number: Complete serial number of device
+            since_last_seen: [DEPRECATED] Number of seconds since activity from device was last detected
+            device_type: Device type (e.g. EEG)
+            vendor: Device vendor or manufacturer
+            first_seen_before: Finds devices that were first seen before this epoch timestamp
+            first_seen_after: Finds devices that were first seen after this epoch timestamp
+            last_seen_before: Finds devices that were last seen before this epoch timestamp
+            last_seen_after: Finds devices that were last seen after this epoch timestamp
+            attribute_label: Partial or complete attribute label
+
+        Returns:
+            List of device objects
+        """
+        params = {
+            "aetitle": aetitle,
+            "class": device_class,
+            "hostname": hostname,
+            "ip_address": ip_address,
+            "mac_address": mac_address,
+            "model": model,
+            "os": os,
+            "page": page,
+            "page_size": page_size,
+            "serial_number": serial_number,
+            "since_last_seen": since_last_seen,
+            "type": device_type,
+            "vendor": vendor,
+            "first_seen_before": first_seen_before,
+            "first_seen_after": first_seen_after,
+            "last_seen_before": last_seen_before,
+            "last_seen_after": last_seen_after,
+            "attribute_label": attribute_label,
+        }
+        # remove None values
+        params = {k: v for k, v in params.items() if v is not None}
+        return self.client._make_request("GET", "/inventory/devices", params=params)
+
     def get_device_attributes(self, mac_address: str) -> Dict[str, Any]:
         """
         Get attributes for a device.

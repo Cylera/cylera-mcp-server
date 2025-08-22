@@ -259,9 +259,9 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
+| **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **DELETE** | `/inventory/device_attributes` | Delete custom attribute for a device - This endpoint deletes a single custom attribute for a single device. If the provided parameters don't match an existing attribute, then nothing will be deleted. Note that if the attribute is a Cylera-created attribute, it won't be deleted. |
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
-| **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
 | **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
 | **GET** | `/risk/vulnerabilities` | Get vulnerabilities - Returns vulnerability information with optional filtering by confidence, detection time, MAC address, name, severity, and status. |

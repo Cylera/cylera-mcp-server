@@ -3,6 +3,7 @@ import os
 import json
 from cylera_client import CyleraClient, Inventory, Utilization
 
+
 class TestGetDevice(unittest.TestCase):
     def test_get_device(self):
         mac_address = "7f:14:22:72:00:e5"
@@ -19,6 +20,7 @@ class TestGetDevice(unittest.TestCase):
         self.assertIn("device", result)
         self.assertIn("aetitle", result["device"])
 
+
 class TestGetProcedures(unittest.TestCase):
     def test_get_procedures(self):
         client = CyleraClient(
@@ -31,6 +33,7 @@ class TestGetProcedures(unittest.TestCase):
         result = utilization.get_procedures(params=params)
         print(json.dumps(result, indent=2))
         self.assertIn("procedures", result)
+
 
 class TestGetDeviceAttributes(unittest.TestCase):
     def test_get_device_attributes(self):
@@ -46,6 +49,27 @@ class TestGetDeviceAttributes(unittest.TestCase):
 
         print(json.dumps(result, indent=2))
         self.assertIn("device_attributes", result)
+
+
+class TestGetDevices(unittest.TestCase):
+    def test_get_devices(self):
+        client = CyleraClient(
+            username=os.environ.get("TEST_CYLERA_USERNAME"),
+            password=os.environ.get("TEST_CYLERA_PASSWORD"),
+            base_url=os.environ.get("TEST_CYLERA_BASE_URL")
+        )
+        inventory = Inventory(client)
+
+        # Call the method with some test parameters
+        result = inventory.get_devices(
+            model="Panasonic IP Camera",
+            page=1,
+            page_size=50
+        )
+
+        print(json.dumps(result, indent=2))
+        self.assertIn("devices", result)
+
 
 if __name__ == "__main__":
     unittest.main()
