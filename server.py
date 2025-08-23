@@ -1,5 +1,6 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
+from typing import Optional
 from cylera_client import CyleraClient, Inventory, Utilization
 from dotenv import load_dotenv
 import os
@@ -64,7 +65,8 @@ def format_procedures(procedures_data) -> list[dict]:
                 "procedure_name": p.get("procedure_name", "Unknown"),
             }
         )
-    return list_of_procedures;
+    return list_of_procedures
+
 
 def format_device_attributes(device_attributes_data) -> list[dict]:
     """Format device attributes data into a readable string for MCP tool"""
@@ -97,14 +99,83 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(
+        params={"device_uuid": device_uuid})
     return format_procedures(procedures)
+
 
 @mcp.tool()
 def get_device_attributes(mac_address: str) -> list[dict]:
     """Get attributes for a defive by MAC address"""
     device_attributes = inventory.get_device_attributes(mac_address)
     return format_device_attributes(device_attributes)
+
+
+@mcp.tool()
+def search_for_devices(
+    aetitle: Optional[str] = None,
+    device_class: Optional[str] = None,
+    hostname: Optional[str] = None,
+    ip_address: Optional[str] = None,
+    mac_address: Optional[str] = None,
+    model: Optional[str] = None,
+    os: Optional[str] = None,
+    page: Optional[int] = None,
+    page_size: Optional[int] = None,
+    serial_number: Optional[str] = None,
+    since_last_seen: Optional[int] = None,
+    device_type: Optional[str] = None,
+    vendor: Optional[str] = None,
+    first_seen_before: Optional[int] = None,
+    first_seen_after: Optional[int] = None,
+    last_seen_before: Optional[int] = None,
+    last_seen_after: Optional[int] = None,
+    attribute_label: Optional[str] = None,
+) -> list[dict]:
+    """
+    Search for devices that match the provided search criteria 
+    Args:
+        aetitle: Complete AE Title of device
+        device_class: Device class (e.g. Medical)
+        hostname: Complete hostname of device
+        ip_address: Partial or complete IP or subnet
+        mac_address: Partial or complete MAC address
+        model: Device model
+        os: Device operating system
+        page: Controls which page of results to return
+        page_size: Controls number of results in each response. Max 100.
+        serial_number: Complete serial number of device
+        since_last_seen: [DEPRECATED] Number of seconds since activity from device was last detected
+        device_type: Device type (e.g. EEG)
+        vendor: Device vendor or manufacturer
+        first_seen_before: Finds devices that were first seen before this epoch timestamp
+        first_seen_after: Finds devices that were first seen after this epoch timestamp
+        last_seen_before: Finds devices that were last seen before this epoch timestamp
+        last_seen_after: Finds devices that were last seen after this epoch timestamp
+        attribute_label: Partial or complete attribute label
+    """
+
+    search_results = inventory.get_devices(
+        aetitle=aetitle,
+        device_class=device_class,
+        hostname=hostname,
+        ip_address=ip_address,
+        mac_address=mac_address,
+        model=model,
+        os=os,
+        page=page,
+        page_size=page_size,
+        serial_number=serial_number,
+        since_last_seen=since_last_seen,
+        device_type=device_type,
+        vendor=vendor,
+        first_seen_before=first_seen_before,
+        first_seen_after=first_seen_after,
+        last_seen_before=last_seen_before,
+        last_seen_after=last_seen_after,
+        attribute_label=attribute_label
+    )
+    return search_results
 
 
 if __name__ == "__main__":

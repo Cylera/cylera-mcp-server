@@ -170,6 +170,65 @@ And it will respond with something like this:
     Information as part of its diagnostic imaging function in the healthcare
     facility.
     
+### Example 5: Search for devices
+
+Prompt:
+
+    Using Cylera, find all the devices with model set to “Panasonic IP Camera” in Location 1
+
+And it will respond with something like this:
+
+    I'll help you search for Panasonic IP Camera devices in Location 1 using Cylera. Let me 
+    search for devices with that specific model.
+
+    Based on the search results, I found 4 Panasonic IP Camera devices specifically located in Location 1:
+    Panasonic IP Cameras in Location 1
+
+    1. Device ID: 67c470a6-4c28-11ec-8a38-5eeeaabea551
+
+    Hostname: PMLETVCUTA
+    IP Address: 10.50.170.146
+    MAC Address: 00:c8:58:bd:2c:66
+    Risk Level: 1 (Low)
+    VLAN: 889
+
+    2. Device ID: 62fc170e-4c28-11ec-8a38-5eeeaabea551
+
+    Hostname: BBRECIFBSL
+    IP Address: 10.30.0.146
+    MAC Address: 0d:75:3c:4a:ea:6c
+    Risk Level: 1 (Low)
+    VLAN: 77
+
+    3. Device ID: 645b45fc-4c28-11ec-8a38-5eeeaabea551
+
+    Hostname: WTAGLHXTTA
+    IP Address: 10.40.197.1
+    MAC Address: 0e:b0:33:4f:c0:36
+    Risk Level: 1 (Low)
+    VLAN: 274
+
+    4. Device ID: 59c7433e-4c28-11ec-8a38-5eeeaabea551
+
+    Hostname: UOKLPQZYWX
+    IP Address: 10.20.216.229
+    MAC Address: 0e:b3:c7:5c:cb:11
+    Risk Level: 1 (Low)
+    VLAN: 893
+
+    All four devices are classified as Infrastructure class, Surveillance Camera type devices 
+    running Windows OS, and all have a low risk level (1). The search returned a total of 250 
+    Panasonic IP Camera devices across all locations, but these 4 are specifically in Location 
+    1 as requested.
+
+Then Prompt
+
+    Generate me a CSV containing these devices
+
+And it will respond with something like this:
+
+    I'll create a CSV file containing the 4 Panasonic IP Camera devices from Location 1.
+
 ## Installation
 
 The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
@@ -250,6 +309,7 @@ The following API endpoints are currently integrated into the MCP server.
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
 | **GET** | `/inventory/device` | Get single device - This endpoint returns details about a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
+| **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
 | **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 
@@ -259,7 +319,6 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
-| **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **DELETE** | `/inventory/device_attributes` | Delete custom attribute for a device - This endpoint deletes a single custom attribute for a single device. If the provided parameters don't match an existing attribute, then nothing will be deleted. Note that if the attribute is a Cylera-created attribute, it won't be deleted. |
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
 | **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
