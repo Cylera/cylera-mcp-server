@@ -130,7 +130,6 @@ def search_for_devices(
     first_seen_after: Optional[int] = None,
     last_seen_before: Optional[int] = None,
     last_seen_after: Optional[int] = None,
-    attribute_label: Optional[str] = None,
 ) -> list[dict]:
     """
     Search for devices that match the provided search criteria 
@@ -152,7 +151,6 @@ def search_for_devices(
         first_seen_after: Finds devices that were first seen after this epoch timestamp
         last_seen_before: Finds devices that were last seen before this epoch timestamp
         last_seen_after: Finds devices that were last seen after this epoch timestamp
-        attribute_label: Partial or complete attribute label
     """
 
     search_results = inventory.get_devices(
@@ -172,8 +170,7 @@ def search_for_devices(
         first_seen_before=first_seen_before,
         first_seen_after=first_seen_after,
         last_seen_before=last_seen_before,
-        last_seen_after=last_seen_after,
-        attribute_label=attribute_label
+        last_seen_after=last_seen_after
     )
     return search_results
 
