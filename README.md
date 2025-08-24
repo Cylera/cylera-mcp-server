@@ -2,6 +2,8 @@
 
 The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cylera](https://cylera.com). Brings context about device inventory, threats, risks and utilization powered by the [Cylera Partner API](https://partner.us1.cylera.com/apidocs/) into an LLM.
 
+![Tutorial][tutorial]
+
 ## Example usage
 
 ### Example 1 - Get information about a device
@@ -327,3 +329,6 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 | **POST** | `/risk/vulnerability` | Update vulnerability - Updates the status of a specific vulnerability using its UUID. |
 | **POST** | `/threat/threat` | Update threat - Updates the status of a specific threat using its UUID. |
 | **GET** | `/threat/threats` | Get threats - Returns threat information with optional filtering by detection time, MAC address, name, severity, and status. |
+
+
+[tutorial]: tutorial.webp
