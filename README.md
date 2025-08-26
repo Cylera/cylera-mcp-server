@@ -4,11 +4,10 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 
 ## Table of Contents
 - [Demo](#demo)
-- 
+- [Architecture](#architecture)
 
 ## Demo
 ![Tutorial][tutorial]
-
 
 ## Architecture
 
