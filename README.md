@@ -2,10 +2,15 @@
 
 The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cylera](https://cylera.com). Brings context about device inventory, threats, risks and utilization powered by the [Cylera Partner API](https://partner.us1.cylera.com/apidocs/) into an LLM.
 
+## Table of Contents
+- [Demo](#demo)
+- 
+
+## Demo
 ![Tutorial][tutorial]
 
-## Architecture
 
+## Architecture
 
 ![Architecture](mcp-architecture.png)
 
