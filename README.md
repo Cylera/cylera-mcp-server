@@ -8,7 +8,7 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 - [Examples](#examples)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Coverage)(#coverage)
+- [Coverage](#coverage)
 
 ## Demo
 ![Tutorial][tutorial]
