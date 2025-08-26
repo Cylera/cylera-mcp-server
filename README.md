@@ -281,7 +281,7 @@ Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other
 
 ### If using Gemini CLI
 
-In the same directory that you cloned the MCP Server for Cylera, create a file called settings.json with the following contents. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
+Modify ~/.gemini/settings.json changing the paths accordingly to the locations where you installed uv:
 
 ```
 {
@@ -297,6 +297,14 @@ In the same directory that you cloned the MCP Server for Cylera, create a file c
   }
 }
 ```
+Test the Gemini configuration by launching gemini. In the start screen, you should 
+see something similar to:
+
+...
+     Using: 1 MCP server (ctrl+t to view)
+...
+
+If you press Ctrl+t, you should see the Cylera MCP server details.
 
 ## Running unit tests
 
