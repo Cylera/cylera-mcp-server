@@ -5,6 +5,7 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 ## Table of Contents
 - [Demo](#demo)
 - [Architecture](#architecture)
+- [Examples](#examples)
 
 ## Demo
 ![Tutorial][tutorial]
@@ -13,8 +14,7 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 
 ![Architecture](mcp-architecture.png)
 
-
-## Example usage
+## Examples
 
 ### Example 1 - Get information about a device
 
