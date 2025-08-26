@@ -6,6 +6,9 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 - [Demo](#demo)
 - [Architecture](#architecture)
 - [Examples](#examples)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Coverage)(#coverage)
 
 ## Demo
 ![Tutorial][tutorial]
@@ -322,7 +325,7 @@ If you press Ctrl+t, you should see the Cylera MCP server details.
     
     test_cylera_client.py .                                                  [100%]
 
-## Supported Cylera Partner API Endpoints
+## Coverage
 
 The following API endpoints are currently integrated into the MCP server.
 
@@ -332,8 +335,6 @@ The following API endpoints are currently integrated into the MCP server.
 | **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
 | **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
-
-## Unsupported Cylera Partner API Endpoints
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.
 
