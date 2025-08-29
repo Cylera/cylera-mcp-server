@@ -244,6 +244,63 @@ And it will respond with something like this:
 
     I'll create a CSV file containing the 4 Panasonic IP Camera devices from Location 1.
 
+### Example 5: Risk mitigations
+
+Prompt:
+
+    Using Cylera, provide suggestions for mitigating CVE-2017-2852
+
+And it will respond with something like this:
+
+    Based on the Cylera system data, here are the risk mitigation suggestions
+    for CVE-2017-2852, which affects Natus Xltek NeuroWorks 8:
+
+    Vulnerability Summary
+
+    This is a denial-of-service vulnerability in the unserialization of lists
+    functionality of Natus Xltek NeuroWorks 8. An attacker can send a specially
+    crafted network packet that causes an out-of-bounds read, resulting in service
+    disruption.
+
+    Primary Mitigation: Software Upgrade
+
+    Upgrade NeuroWorks Software
+
+    1. Contact Natus: Reach out to Natus at 1-800-387-7516 or
+    Oakville_Technical_Service@natus.com to request the free software update
+    2. Apply Upgrade: Install the software update on all affected devices
+
+    Compensating Controls: Incident Response Plan
+
+    Since this affects medical devices, having a comprehensive incident
+    response plan is crucial:
+
+    Incident Response Preparation
+
+    1. Identify Contacts: Establish clear contact points within biomedical
+    engineering teams responsible for these devices
+    2. Communication Procedures: Create documented procedures for alerting
+    relevant staff including IT, Information Security, biomedical engineering, and
+    clinical teams in case of device compromise
+    3. Network Segmentation Planning: Document procedures for isolating or
+    disconnecting devices from the network during various clinical scenarios
+    4. Workflow Contingencies: Plan for workflow changes that may be necessary if
+    devices need to be disconnected from the network (such as manual processes for
+    drug library updates)
+    5. Training and Simulation: Schedule regular training events to prepare staff
+    for potential device downtime scenarios
+
+    Additional Recommendations
+
+    Given the nature of this vulnerability, I would also suggest:
+
+    - Network Monitoring: Implement monitoring for unusual network traffic to these devices
+    - Network Segmentation: Consider placing these devices on isolated network segments with restricted access
+    - Access Controls: Limit network access to these devices to only necessary systems and personnel
+
+    The primary focus should be on applying the vendor's software update, as
+    this directly addresses the vulnerability at its source.
+
 ## Installation
 
 The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
@@ -335,6 +392,8 @@ The following API endpoints are currently integrated into the MCP server.
 | **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
 | **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
+| **GET** | `/network/subnets` | (Currently not working) Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
+| **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.
 
@@ -342,8 +401,6 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 |-------------|-----|-------------|
 | **DELETE** | `/inventory/device_attributes` | Delete custom attribute for a device - This endpoint deletes a single custom attribute for a single device. If the provided parameters don't match an existing attribute, then nothing will be deleted. Note that if the attribute is a Cylera-created attribute, it won't be deleted. |
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
-| **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
-| **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
 | **GET** | `/risk/vulnerabilities` | Get vulnerabilities - Returns vulnerability information with optional filtering by confidence, detection time, MAC address, name, severity, and status. |
 | **POST** | `/risk/vulnerability` | Update vulnerability - Updates the status of a specific vulnerability using its UUID. |
 | **POST** | `/threat/threat` | Update threat - Updates the status of a specific threat using its UUID. |
