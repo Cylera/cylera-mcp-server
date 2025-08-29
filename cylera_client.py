@@ -86,16 +86,14 @@ class CyleraClient:
             data = response.json()
 
             if "token" not in data:
-                raise CyleraAuthError(
-                    "No token received in authentication response")
+                raise CyleraAuthError("No token received in authentication response")
 
             self._token = data["token"]
             # Set token expiry to 23 hours (assuming 24-hour token validity)
             self._token_expiry = datetime.now() + timedelta(hours=23)
 
             # Update session headers with the new token
-            self.session.headers.update(
-                {"Authorization": f"Bearer {self._token}"})
+            self.session.headers.update({"Authorization": f"Bearer {self._token}"})
 
         except requests.exceptions.HTTPError as e:
             raise CyleraAuthError(f"Authentication failed: {str(e)}")
@@ -354,3 +352,27 @@ class Network:
         # remove None values
         params = {k: v for k, v in params.items() if v is not None}
         return self.client._make_request("GET", "/network/subnets", params=params)
+
+
+class Risk:
+    """
+    Helper class for risk-related endpoints using composition with
+    CyleraClient.
+    """
+
+    def __init__(self, client: CyleraClient):
+        self.client = client
+
+    def get_mitigations(self, vulnerability: str) -> List[Dict[str, Any]]:
+        """
+        Get a list of mitigations for a vulnerability.
+
+        Args:
+            vulnerability: The name of the vulnerability.
+
+        Returns:
+            List of mitigation objects
+        """
+        return self.client._make_request(
+            "GET", "/risk/mitigations", params={"vulnerability": vulnerability}
+        )

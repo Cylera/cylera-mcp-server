@@ -1,7 +1,7 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
 from typing import Optional
-from cylera_client import CyleraClient, Inventory, Utilization
+from cylera_client import CyleraClient, Inventory, Utilization, Risk
 from dotenv import load_dotenv
 import os
 
@@ -21,6 +21,7 @@ client = CyleraClient(
 # Create an Inventory helper using the client
 inventory = Inventory(client)
 utilization = Utilization(client)
+risk = Risk(client)
 
 
 def format_device(device_data):
@@ -89,6 +90,15 @@ def format_device_attributes(device_attributes_data) -> list[dict]:
     return device_attributes
 
 
+def format_risk_mitigations(risk_mitigations) -> str:
+    """Format risk mitigations data into a readable string for MCP tool"""
+    return f"""vulnerability Information:
+        - description: {risk_mitigations.get("description", "Unknown")}
+        - Additional information can be found at the following links: {risk_mitigations.get("additional_info", "None available")}
+        - Vendor response: {risk_mitigations.get("vendor_response", "Unknown")}
+        - Mitigations: {risk_mitigations.get("mitigations", "Unknown")}"""
+
+
 @mcp.tool()
 def get_device(mac_address: str) -> str:
     """Get details about a device by MAC address"""
@@ -99,8 +109,7 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(
-        params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
@@ -109,6 +118,13 @@ def get_device_attributes(mac_address: str) -> list[dict]:
     """Get attributes for a defive by MAC address"""
     device_attributes = inventory.get_device_attributes(mac_address)
     return format_device_attributes(device_attributes)
+
+
+@mcp.tool()
+def get_risk_mitigations(cve_reference: str) -> str:
+    """Get risk mitigations for a given CVE reference"""
+    risk_mitigations = risk.get_mitigations(vulnerability=cve_reference)
+    return format_risk_mitigations(risk_mitigations)
 
 
 @mcp.tool()
@@ -132,7 +148,7 @@ def search_for_devices(
     last_seen_after: Optional[int] = None,
 ) -> list[dict]:
     """
-    Search for devices that match the provided search criteria 
+    Search for devices that match the provided search criteria
     Args:
         aetitle: Complete AE Title of device
         device_class: Device class (e.g. Medical)
@@ -170,7 +186,7 @@ def search_for_devices(
         first_seen_before=first_seen_before,
         first_seen_after=first_seen_after,
         last_seen_before=last_seen_before,
-        last_seen_after=last_seen_after
+        last_seen_after=last_seen_after,
     )
     return search_results
 

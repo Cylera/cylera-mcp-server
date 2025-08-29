@@ -1,7 +1,7 @@
 import unittest
 import os
 import json
-from cylera_client import CyleraClient, Inventory, Utilization, Network
+from cylera_client import CyleraClient, Inventory, Utilization, Network, Risk
 
 
 class TestGetDevice(unittest.TestCase):
@@ -77,9 +77,23 @@ class TestGetSubnets(unittest.TestCase):
             base_url=os.environ.get("TEST_CYLERA_BASE_URL"),
         )
         network = Network(client)
-        result = network.get_subnets(vlan="751", page=0)
+        # result = network.get_subnets(vlan="751", page=0)
+        result = network.get_subnets(page=0)
         print(json.dumps(result, indent=2))
         self.assertIn("subnets", result)
+
+
+class TestGetMitigations(unittest.TestCase):
+    def test_get_mitigations(self):
+        client = CyleraClient(
+            username=os.environ.get("TEST_CYLERA_USERNAME"),
+            password=os.environ.get("TEST_CYLERA_PASSWORD"),
+            base_url=os.environ.get("TEST_CYLERA_BASE_URL"),
+        )
+        risk = Risk(client)
+        result = risk.get_mitigations(vulnerability="CVE-2017-2852")
+        print(json.dumps(result, indent=2))
+        self.assertIn("mitigations", result)
 
 
 if __name__ == "__main__":
