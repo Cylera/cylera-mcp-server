@@ -77,8 +77,8 @@ class TestGetSubnets(unittest.TestCase):
             base_url=os.environ.get("TEST_CYLERA_BASE_URL"),
         )
         network = Network(client)
-        # result = network.get_subnets(vlan="751", page=0)
-        result = network.get_subnets(page=0)
+        result = network.get_subnets(vlan="477", page=0)
+        # result = network.get_subnets(page=0)
         print(json.dumps(result, indent=2))
         self.assertIn("subnets", result)
 
