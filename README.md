@@ -244,7 +244,7 @@ And it will respond with something like this:
 
     I'll create a CSV file containing the 4 Panasonic IP Camera devices from Location 1.
 
-### Example 5: Risk mitigations
+### Example 6: Risk mitigations
 
 Prompt:
 
@@ -300,6 +300,34 @@ And it will respond with something like this:
 
     The primary focus should be on applying the vendor's software update, as
     this directly addresses the vulnerability at its source.
+
+### Example 7: Subnets
+
+Prompt:
+
+    Using Cylera, tell me about subnet with VLAN 477
+
+And it will respond with something like this:
+
+    Based on the Cylera data, here's what I found about the subnet with VLAN 477:
+
+    Subnet Details:
+
+    - VLAN: 477
+    - Description: Main Building - Floor 4
+    - CIDR Range: Not specified in the available data
+    - Gateway: Not specified in the available data
+    - Dynamic Status: Not specified in the available data
+
+    The subnet appears to be associated with the 4th floor of the main building, 
+    suggesting it's likely used for devices and network infrastructure on that 
+    floor. However, some technical details like the specific IP range (CIDR), 
+    gateway address, and whether it uses dynamic IP allocation aren't available 
+    in the current response.
+
+    If you need more detailed technical information about this subnet, such as 
+    the specific IP address range or gateway configuration, you may need to access 
+    the full Cylera interface directly or contact your network administrator.
 
 ## Installation
 
@@ -392,7 +420,7 @@ The following API endpoints are currently integrated into the MCP server.
 | **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |
 | **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
-| **GET** | `/network/subnets` | (Currently not working) Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
+| **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
 | **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.

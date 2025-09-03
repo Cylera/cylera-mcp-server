@@ -1,9 +1,10 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
 from typing import Optional
-from cylera_client import CyleraClient, Inventory, Utilization, Risk
+from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network
 from dotenv import load_dotenv
 import os
+import datetime
 
 # Create an MCP server
 mcp = FastMCP("Cylera")
@@ -22,6 +23,7 @@ client = CyleraClient(
 inventory = Inventory(client)
 utilization = Utilization(client)
 risk = Risk(client)
+network = Network(client)
 
 
 def format_device(device_data):
@@ -74,29 +76,40 @@ def format_device_attributes(device_attributes_data) -> list[dict]:
     device_attributes = device_attributes_data.get("device_attributes", [])
     list_of_device_attributes = []
     for a in device_attributes:
-        list_of_device_attributes.append(
-            {
-                "category": a.get("category", "Unknown"),
-                "created": a.get("created", "Unknown"),
-                "label": a.get("label", "Unknown"),
-                "overridden_by": a.get("overridden_by", "Unknown"),
-                "source_description": a.get("source_description", "Unknown"),
-                "source_name": a.get("source_name", "Unknown"),
-                "value": a.get("value", "Unknown"),
-                "label": a.get("label", "Unknown"),
-                "value": a.get("value", "Unknown"),
-            }
-        )
-    return device_attributes
+        key = a.get("label")
+        if key:
+            value = a.get("value", "Unknown")
+            list_of_device_attributes.append({key: value})
+    return list_of_device_attributes
 
 
 def format_risk_mitigations(risk_mitigations) -> str:
     """Format risk mitigations data into a readable string for MCP tool"""
     return f"""vulnerability Information:
-        - description: {risk_mitigations.get("description", "Unknown")}
-        - Additional information can be found at the following links: {risk_mitigations.get("additional_info", "None available")}
-        - Vendor response: {risk_mitigations.get("vendor_response", "Unknown")}
-        - Mitigations: {risk_mitigations.get("mitigations", "Unknown")}"""
+    - description: {risk_mitigations.get("description", "Unknown")}
+    - Additional information can be found at the following links: {risk_mitigations.get("additional_info", "None available")}
+    - Vendor response: {risk_mitigations.get("vendor_response", "Unknown")}
+    - Mitigations: {risk_mitigations.get("mitigations", "Unknown")}"""
+
+
+def format_subnets(subnets_data) -> str:
+    """Format subnets data into a readable string for MCP tool"""
+    subnets = subnets_data.get("subnets", [])
+    formatted_subnets = "Subnets Information:\n"
+    for subnet in subnets:
+        formatted_subnets += f"""
+        - Subnet: {subnet.get("subnet", "Unknown")}
+        - VLAN: {subnet.get("vlan", "Unkown")}
+        - Description: {subnet.get("description", "Unkown")}
+        - Mask length: {subnet.get("mask_len", "Unkown")}
+        - CIDR: {subnet.get("subnet_inet", "Unkown")}
+        - Total devices: {subnet.get("total_devices", "Unkown")}
+        """
+        for device_breakdown in subnet.get("device_breakdown"):
+            formatted_subnets += f"""
+            - {device_breakdown.get("class", "Unknown")} has {device_breakdown.get("count", "Unknown")} devices
+            """
+    return formatted_subnets
 
 
 @mcp.tool()
@@ -109,7 +122,8 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(
+        params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
@@ -125,6 +139,25 @@ def get_risk_mitigations(cve_reference: str) -> str:
     """Get risk mitigations for a given CVE reference"""
     risk_mitigations = risk.get_mitigations(vulnerability=cve_reference)
     return format_risk_mitigations(risk_mitigations)
+
+
+@mcp.tool()
+def get_subnets(
+    cidr_range: Optional[str] = None,
+    description: Optional[str] = None,
+    vlan: Optional[int] = None,
+    page: Optional[int] = None,
+    page_size: Optional[int] = None,
+) -> str:
+    """Get a list of subnets."""
+    subnets = network.get_subnets(
+        cidr_range=cidr_range,
+        description=description,
+        vlan=vlan,
+        page=page,
+        page_size=page_size,
+    )
+    return format_subnets(subnets)
 
 
 @mcp.tool()
@@ -161,7 +194,7 @@ def search_for_devices(
         page_size: Controls number of results in each response. Max 100.
         serial_number: Complete serial number of device
         since_last_seen: [DEPRECATED] Number of seconds since activity from device was last detected
-        device_type: Device type (e.g. EEG)
+        device_type: Device type(e.g. EEG)
         vendor: Device vendor or manufacturer
         first_seen_before: Finds devices that were first seen before this epoch timestamp
         first_seen_after: Finds devices that were first seen after this epoch timestamp
