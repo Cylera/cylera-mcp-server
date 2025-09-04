@@ -17,6 +17,34 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 
 ![Architecture](mcp-architecture.png)
 
+## Security
+
+Since it's introduction in [late 2024](https://www.anthropic.com/news/model-context-protocol), MCP has quickly become a standard for connecting AI 
+assistants to any other systems and data you may have within your enterprise. This is powerful 
+because it enables proprietary and up-to the minute data that were (hopefully) not included in 
+the original training set of the model, to be brought into context.
+
+A powerful technology such as GenAI brings wonderful opportunities for efficiency and automation. 
+Of course, there are also opportunities for things to go awry. The security threats are emerging 
+and so it is strongly encouraged that you evaluate your AI usage through a security lens.
+
+In essence, as we begin to consider concentrating power into agents that act on
+your behalf, know that this makes the agent a highly prized target for a bad actor. The risks
+are particularly high if the agent contains the [lethal trifecta of private data, untrusted content and
+external communication](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/).
+
+There are risks involved and it is worthwhile to become apprised of the risks and
+how to potentially mitigate them. The OWASP [Top 10 Risk & Mitigations for LLMs and Gen AI Apps](https://genai.owasp.org/llm-top-10/) 
+is a valuable resource for keeping on top of the security landscape. 
+
+Of course, a conservative wait and see approach might be a consideration but know that bad
+actors are [weaponizing GenAI](https://www.youtube.com/watch?v=_GxopZS8LwU). 
+
+This MCP server has been designed with threats in mind. At least for now, the
+MCP server only supports read-only operations of the data (only GET operations). This does not
+eliminate the risk of data exfiltration, but it does reduce eliminate the risk of data vandalism 
+and un-authorized manipulation when an agent is compromized.
+
 ## Examples
 
 ### Example 1 - Get information about a device
