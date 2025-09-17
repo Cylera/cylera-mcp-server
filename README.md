@@ -410,6 +410,17 @@ Currently, the instructions are a little technical - we will look at opportuniti
 2. Install [uv](https://github.com/astral-sh/uv) 
 3. Clone the MCP Server for Cylera
 
+## Docker MCP Gateway
+
+We are exploring using [Docker MCP Gateway](https://docs.docker.com/ai/mcp-gateway/) to make it easier to deploy and
+secure.
+
+To publish in the [mcp-registry](https://github.com/docker/mcp-registry/blob/main/CONTRIBUTING.md), requires the MCP server to be containerized. Here's how to build and run it.
+
+    docker build -t mcp-cylera-server .
+    docker run -it -e CYLERA_USERNAME=<username> -e CYLERA_PASSWORD=<password> -e CYLERA_BASE_URL=https://partner.demo.cylera.com/ mcp-cylera-server
+
+
 ## Configuration
 
 Create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:

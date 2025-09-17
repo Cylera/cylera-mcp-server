@@ -1,0 +1,22 @@
+# Ignore Git directory
+.git
+
+# Ignore virtual environment
+.venv
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore Gemini CLI directory
+.gemini/
+
+# Ignore build artifacts and other unnecessary files
+.gitignore
+Dockerfile
+README.md
+mcp-architecture.png
+tutorial.webp
