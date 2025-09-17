@@ -8,16 +8,17 @@ API https://partner.us1.cylera.com/apidocs/
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 from datetime import datetime, timedelta
+from sys import stderr
 
 import requests
 from requests.exceptions import RequestException
 
 
 def print_request_details(response, *args, **kwargs):
-    print(f"Request URL: {response.request.url}")
-    print(f"Request Headers: {dict(response.request.headers)}")
+    print(f"Request URL: {response.request.url}", file=stderr)
+    print(f"Request Headers: {dict(response.request.headers)}", file=stderr)
     if response.request.body:
-        print(f"Request Body: {response.request.body}")
+        print(f"Request Body: {response.request.body}", file=stderr)
 
 
 class CyleraAuthError(Exception):
@@ -86,14 +87,16 @@ class CyleraClient:
             data = response.json()
 
             if "token" not in data:
-                raise CyleraAuthError("No token received in authentication response")
+                raise CyleraAuthError(
+                    "No token received in authentication response")
 
             self._token = data["token"]
             # Set token expiry to 23 hours (assuming 24-hour token validity)
             self._token_expiry = datetime.now() + timedelta(hours=23)
 
             # Update session headers with the new token
-            self.session.headers.update({"Authorization": f"Bearer {self._token}"})
+            self.session.headers.update(
+                {"Authorization": f"Bearer {self._token}"})
 
         except requests.exceptions.HTTPError as e:
             raise CyleraAuthError(f"Authentication failed: {str(e)}")
@@ -129,7 +132,6 @@ class CyleraClient:
         self._authenticate()
 
         url = urljoin(self.base_url, endpoint)
-        print(url)
 
         try:
             response = self.session.request(
@@ -376,3 +378,48 @@ class Risk:
         return self.client._make_request(
             "GET", "/risk/mitigations", params={"vulnerability": vulnerability}
         )
+
+    def get_vulnerabilities(
+        self,
+        confidence: Optional[str] = None,
+        detected_after: Optional[int] = None,
+        mac_address: Optional[str] = None,
+        name: Optional[str] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+        severity: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get a list of vulnerabilities.
+
+        Args:
+            confidence: Confidence in vulnerability detection.
+                        Enum: "LOW", "MEDIUM", "HIGH"
+            detected_after: Epoch timestamp after which a vulnerability was
+                            detected.
+            mac_address: MAC address of device.
+            name: Name of the vulnerability (complete or partial).
+            page: Controls which page of results to return.
+            page_size: Controls number of results in each response. Max 100.
+            severity: Vulnerability severity.
+                      Enum: "INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"
+            status: Vulnerability status.
+                    Enum: "OPEN", "IN_PROGRESS", "RESOLVED", "SUPPRESSED"
+
+        Returns:
+            List of vulnerability objects
+        """
+        params = {
+            "confidence": confidence,
+            "detected_after": detected_after,
+            "mac_address": mac_address,
+            "name": name,
+            "page": page,
+            "page_size": page_size,
+            "severity": severity,
+            "status": status,
+        }
+        # remove None values
+        params = {k: v for k, v in params.items() if v is not None}
+        return self.client._make_request("GET", "/risk/vulnerabilities", params=params)

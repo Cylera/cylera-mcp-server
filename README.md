@@ -56,10 +56,10 @@ Prompt:
 And it will respond with something like this:
 
     I'll look up the device information for that MAC address using Cylera.
-
+    
     Here's the information about the device with MAC address d9:68:3a:ce:3d:e3:
     Device Details:
-
+    
     Hostname: IoMTPOUMEDCARESCAPE-TS-NS01
     IP Address: 10.120.209.202
     Device Type: Server
@@ -69,9 +69,9 @@ And it will respond with something like this:
     Location: Urgent Care Clinic
     Risk Level: 4 (on what appears to be a scale where higher numbers indicate higher risk)
     VLAN: -1 (not assigned to a specific VLAN)
-
-    This appears to be a Dell server located in an urgent care clinic, classified as an IoT device. The hostname suggests it may be related to medical care systems (MEDCARESCAPE). The risk level of 4 indicates this device may require attention from a security perspective.
     
+    This appears to be a Dell server located in an urgent care clinic, classified as an IoT device. The hostname suggests it may be related to medical care systems (MEDCARESCAPE). The risk level of 4 indicates this device may require attention from a security perspective.
+
 ### Example 2: Get information about device utilization
 
 Prompt:
@@ -81,46 +81,46 @@ Prompt:
 And it will respond with something like this:
 
     I'll help you get the utilization summary for that device. Let me first retrieve the device information and then get its recent procedures.
-
+    
     Utilization Summary for Philips Allura Xper X-Ray System (MAC: 7f:14:22:72:00:e5)
-
+    
     Device Overview:
-
+    
     - Model: Philips Allura Xper X-Ray System (Version 8.1.17.2)
     - Location: Location 2
     - IP Address: 10.40.6.159
     - Risk Level: 4 (High - device is outdated running Windows XP)
-
+    
     Recent Utilization Analysis: Based on the last 20 procedures recorded, this X-ray system shows active and diverse utilization:
-
+    
     Procedure Distribution:
-
+    
     - Abdomen imaging: 6 procedures (30%)
     - Cardiac procedures: 3 procedures (15%)
     - Interventional Radiology (IR): 5 procedures (25%)
     - Head imaging: 3 procedures (15%)
     - Other specialized procedures: 3 procedures (15%)
-
+    
     Usage Patterns:
-
+    
     - Total procedures analyzed: 20
     - Image volume: 145 total images across procedures (average 7.25 images per procedure)
     - Procedure duration: Highly variable, ranging from 6 minutes to over 9 hours
     - Peak usage: Extended procedures often run overnight or span multiple shifts
     - Date range: Recent activity from late June through July 2025
-
+    
     Key Observations:
-
+    
     The system handles a diverse case mix including routine imaging, cardiac catheterizations, and complex interventional procedures
     Several long-duration procedures suggest use for complex interventional cases requiring extended imaging
     High image counts in some procedures (up to 15 images) indicate thorough diagnostic imaging
     Active utilization across different times of day, including after-hours procedures
-
+    
     Operational Concerns:
-
+    
     Device is flagged as outdated and poses security risks (Windows XP operating system)
     Despite age, the system remains actively utilized for critical medical procedures
-
+    
     This X-ray system demonstrates consistent, heavy utilization across multiple procedure types, 
     making it a critical piece of equipment for the facility's imaging and interventional capabilities.
 
@@ -194,25 +194,25 @@ And it will respond with something like this:
 
     I'll look up the device with that MAC address to check if it stores ePHI 
     (electronic Protected Health Information).
-
+    
     Let me get more detailed attributes for this device to see if there's specific
     information about ePHI storage.
-
+    
     Yes, the device with MAC address 7f:14:22:72:00:e5 does store ePHI. This is a
     Philips Allura Xper X-Ray System, and according to the device attributes, it has
     the "Stores ePHI" attribute set to true.
-
+    
     Additionally, this device:
-
+    
     Creates ePHI (generates patient health information through X-ray imaging)
     Receives ePHI (gets patient data from other systems)
     Transmits ePHI (sends patient data to other systems)
     Has been observed sending cleartext PHI both internally and externally
-
+    
     This X-ray machine is actively involved in handling electronic Protected Health
     Information as part of its diagnostic imaging function in the healthcare
     facility.
-    
+
 ### Example 5: Search for devices
 
 Prompt:
@@ -223,42 +223,42 @@ And it will respond with something like this:
 
     I'll help you search for Panasonic IP Camera devices in Location 1 using Cylera. Let me 
     search for devices with that specific model.
-
+    
     Based on the search results, I found 4 Panasonic IP Camera devices specifically located in Location 1:
     Panasonic IP Cameras in Location 1
-
+    
     1. Device ID: 67c470a6-4c28-11ec-8a38-5eeeaabea551
-
+    
     Hostname: PMLETVCUTA
     IP Address: 10.50.170.146
     MAC Address: 00:c8:58:bd:2c:66
     Risk Level: 1 (Low)
     VLAN: 889
-
+    
     2. Device ID: 62fc170e-4c28-11ec-8a38-5eeeaabea551
-
+    
     Hostname: BBRECIFBSL
     IP Address: 10.30.0.146
     MAC Address: 0d:75:3c:4a:ea:6c
     Risk Level: 1 (Low)
     VLAN: 77
-
+    
     3. Device ID: 645b45fc-4c28-11ec-8a38-5eeeaabea551
-
+    
     Hostname: WTAGLHXTTA
     IP Address: 10.40.197.1
     MAC Address: 0e:b0:33:4f:c0:36
     Risk Level: 1 (Low)
     VLAN: 274
-
+    
     4. Device ID: 59c7433e-4c28-11ec-8a38-5eeeaabea551
-
+    
     Hostname: UOKLPQZYWX
     IP Address: 10.20.216.229
     MAC Address: 0e:b3:c7:5c:cb:11
     Risk Level: 1 (Low)
     VLAN: 893
-
+    
     All four devices are classified as Infrastructure class, Surveillance Camera type devices 
     running Windows OS, and all have a low risk level (1). The search returned a total of 250 
     Panasonic IP Camera devices across all locations, but these 4 are specifically in Location 
@@ -282,29 +282,29 @@ And it will respond with something like this:
 
     Based on the Cylera system data, here are the risk mitigation suggestions
     for CVE-2017-2852, which affects Natus Xltek NeuroWorks 8:
-
+    
     Vulnerability Summary
-
+    
     This is a denial-of-service vulnerability in the unserialization of lists
     functionality of Natus Xltek NeuroWorks 8. An attacker can send a specially
     crafted network packet that causes an out-of-bounds read, resulting in service
     disruption.
-
+    
     Primary Mitigation: Software Upgrade
-
+    
     Upgrade NeuroWorks Software
-
+    
     1. Contact Natus: Reach out to Natus at 1-800-387-7516 or
     Oakville_Technical_Service@natus.com to request the free software update
     2. Apply Upgrade: Install the software update on all affected devices
-
+    
     Compensating Controls: Incident Response Plan
-
+    
     Since this affects medical devices, having a comprehensive incident
     response plan is crucial:
-
+    
     Incident Response Preparation
-
+    
     1. Identify Contacts: Establish clear contact points within biomedical
     engineering teams responsible for these devices
     2. Communication Procedures: Create documented procedures for alerting
@@ -317,15 +317,15 @@ And it will respond with something like this:
     drug library updates)
     5. Training and Simulation: Schedule regular training events to prepare staff
     for potential device downtime scenarios
-
+    
     Additional Recommendations
-
+    
     Given the nature of this vulnerability, I would also suggest:
-
+    
     - Network Monitoring: Implement monitoring for unusual network traffic to these devices
     - Network Segmentation: Consider placing these devices on isolated network segments with restricted access
     - Access Controls: Limit network access to these devices to only necessary systems and personnel
-
+    
     The primary focus should be on applying the vendor's software update, as
     this directly addresses the vulnerability at its source.
 
@@ -338,24 +338,67 @@ Prompt:
 And it will respond with something like this:
 
     Based on the Cylera data, here's what I found about the subnet with VLAN 477:
-
+    
     Subnet Details:
-
+    
     - VLAN: 477
     - Description: Main Building - Floor 4
     - CIDR Range: Not specified in the available data
     - Gateway: Not specified in the available data
     - Dynamic Status: Not specified in the available data
-
+    
     The subnet appears to be associated with the 4th floor of the main building, 
     suggesting it's likely used for devices and network infrastructure on that 
     floor. However, some technical details like the specific IP range (CIDR), 
     gateway address, and whether it uses dynamic IP allocation aren't available 
     in the current response.
-
+    
     If you need more detailed technical information about this subnet, such as 
     the specific IP address range or gateway configuration, you may need to access 
     the full Cylera interface directly or contact your network administrator.
+
+### Example 8: vulnerabilities
+
+Prompt:
+
+    Using Cylera, tell me about critical vulnerabilities
+
+And it will respond with something like this:
+
+    I'll help you find information about critical vulnerabilities using the Cylera
+    system. Let me search for vulnerabilities with critical severity.
+    
+    Based on the Cylera system data, here's what I found about critical
+    vulnerabilities: Critical Vulnerability Summary Primary Threat: Ripple20
+    (ICSA-20-168-01) The system shows a widespread critical vulnerability affecting
+    medical devices across your network. All 20 devices shown are affected by the
+    Ripple20 vulnerability, which is a series of zero-day vulnerabilities in a
+    TCP/IP library used by hundreds of millions of connected devices. Key Details:
+    Severity: Critical Status: Most are "Open" (19 devices), with 1 showing "In
+    Progress" Confidence Level: High Affected Device Class: Medical devices
+    Vulnerability Category: Security Affected Network Ranges:
+    
+    10.20.x.x subnet (4 devices)
+    10.30.x.x subnet (8 devices)
+    10.50.x.x subnet (8 devices)
+    
+    Risk Assessment:
+    This is a particularly concerning situation because:
+    
+    Medical devices are affected, which could impact patient safety
+    High confidence rating indicates the vulnerability detection is reliable
+    All devices show the same timestamp pattern, suggesting systematic scanning detected this vulnerability
+    The vulnerability has been open for an extended period (timestamps from late 2021)
+    
+    The system indicates there are more critical vulnerabilities beyond these 20
+    devices. Would you like me to:
+    
+    Fetch additional pages to see more affected devices
+    Look up specific risk mitigations for the Ripple20 vulnerability
+    Get more details about any specific device by MAC address
+    
+    This appears to be a significant security incident requiring immediate
+    attention, especially given the medical device classification.
 
 ## Installation
 
@@ -374,7 +417,7 @@ Create a .env file in the same directory that you cloned the MCP Server for Cyle
     CYLERA_BASE_URL=https://partner.us1.cylera.com/" # Or https://partner.uk1.cylera.com/ Or https://partner.demo.cylera.com
     CYLERA_USERNAME="<Your username>"
     CYLERA_PASSWORD="<Your password>"
-
+    
     TEST_CYLERA_BASE_URL="https://partner.demo.cylera.com"
     TEST_CYLERA_USERNAME="<Your username>"
     TEST_CYLERA_PASSWORD="<Your password>"

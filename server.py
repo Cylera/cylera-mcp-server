@@ -1,6 +1,7 @@
 # server.py
+from sys import stderr
 from mcp.server.fastmcp import FastMCP
-from typing import Optional
+from typing import Optional, Literal
 from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network
 from dotenv import load_dotenv
 import os
@@ -112,6 +113,31 @@ def format_subnets(subnets_data) -> str:
     return formatted_subnets
 
 
+def format_vulnerabilities(vulnerabilities_data) -> str:
+    """Format vulnerabilities into a readable string for MCP tool"""
+    vulnerabilities = vulnerabilities_data.get("vulnerabilities", [])
+    formatted_vulnerabilities = (
+        "vulnerabilities Information first page. Ask for the next page to see more:\n"
+    )
+    for vulnerability in vulnerabilities:
+        formatted_vulnerabilities += f"""
+        - ip_address: {vulnerability.get("ip_address", "Unknown")}
+        - mac_address: {vulnerability.get("mac_address", "Unknown")}
+        - model: {vulnerability.get("model", "Unknown")}
+        - type: {vulnerability.get("type", "Unknown")}
+        - vendor: {vulnerability.get("vendor", "Unknown")}
+        - class: {vulnerability.get("class", "Unknown")}
+        - vulnerability_name: {vulnerability.get("vulnerability_name", "Unknown")}
+        - vulnerability_category: {vulnerability.get("vulnerability_category", "Unknown")}
+        - first_seen: {vulnerability.get("first_seen", "Unknown")}
+        - last_seen: {vulnerability.get("last_seen", "Unknown")}
+        - severity: {vulnerability.get("severity", "Unknown")}
+        - status: {vulnerability.get("status", "Unknown")}
+        - confidence: {vulnerability.get("confidence", "Unknown")}
+        """
+    return formatted_vulnerabilities
+
+
 @mcp.tool()
 def get_device(mac_address: str) -> str:
     """Get details about a device by MAC address"""
@@ -158,6 +184,52 @@ def get_subnets(
         page_size=page_size,
     )
     return format_subnets(subnets)
+
+
+@mcp.tool()
+def get_vulnerabilities(
+    confidence: Optional[str] = None,
+    detected_after: Optional[int] = None,
+    mac_address: Optional[str] = None,
+    name: Optional[str] = None,
+    page: Optional[int] = 1,
+    page_size: Optional[int] = 20,
+    severity: Optional[Literal["CRITICAL", "HIGH", "MEDIUM", "LOW"]] = None,
+    status: Optional[str] = None,
+) -> str:
+    """
+    Returns a paginated list of vulnerabilities. The response includes:
+    - data: list of vulnerabilities for the current page
+    - pagination: metadata about pagination
+        - page: current page number
+        - page_size: number of items per page
+        - total_count: total number of vulnerabilities
+        - has_more: true if additional pages exist
+        - next_page: next page number if more pages exist
+
+        If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+    """
+    vulnerabilities = risk.get_vulnerabilities(
+        confidence=confidence,
+        detected_after=detected_after,
+        mac_address=mac_address,
+        name=name,
+        page=page,
+        page_size=page_size,
+        severity=severity,
+        status=status,
+    )
+    count = len(vulnerabilities.get("vulnerabilities", []))
+    has_more = count >= page_size
+    return {
+        "data": format_vulnerabilities(vulnerabilities),
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "has_more": has_more,
+            "next_page": page + 1,
+        },
+    }
 
 
 @mcp.tool()

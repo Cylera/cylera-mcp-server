@@ -96,5 +96,18 @@ class TestGetMitigations(unittest.TestCase):
         self.assertIn("mitigations", result)
 
 
+class TestGetVulnerabilities(unittest.TestCase):
+    def test_get_vulnerabilities(self):
+        client = CyleraClient(
+            username=os.environ.get("TEST_CYLERA_USERNAME"),
+            password=os.environ.get("TEST_CYLERA_PASSWORD"),
+            base_url=os.environ.get("TEST_CYLERA_BASE_URL"),
+        )
+        risk = Risk(client)
+        result = risk.get_vulnerabilities(severity="CRITICAL")
+        print(json.dumps(result, indent=2))
+        self.assertIn("vulnerabilities", result)
+
+
 if __name__ == "__main__":
     unittest.main()
