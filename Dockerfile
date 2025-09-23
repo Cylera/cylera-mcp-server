@@ -17,6 +17,13 @@ RUN uv sync --frozen --no-dev
 # Copy the rest of the application code
 COPY . .
 
+# Create non-root user
+RUN useradd -m -u 1000 mcpuser && \
+    chown -R mcpuser:mcpuser /app
+
+# Switch to non-root user
+USER mcpuser
+
 # The server expects the following environment variables to be set at runtime:
 # - CYLERA_USERNAME
 # - CYLERA_PASSWORD
