@@ -400,26 +400,30 @@ And it will respond with something like this:
     This appears to be a significant security incident requiring immediate
     attention, especially given the medical device classification.
 
-## Installation
+## Installation - the easy button
+
+The simplest and most secure way to install is using the [Docker MCP Toolkit](https://www.docker.com/products/mcp-catalog-and-toolkit/)
+which is available in the latest versions of [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+Simply search for Cylera within the Catalog, click the "Add MCP Server" button
+and configure it via the Configuration tab.
+
+Then, simply connect the clients you want to use.
+
+Not only does this approach make it easier to connect multiple chat
+applications with multiple MCP servers, it also helps to secure credentials
+needed for configuration by storing them in an embedded vault.
+
+## Manual Installation
 
 The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
 
-Currently, the instructions are a little technical - we will look at opportunities for making the installation easier in the future.
+Currently, the instructions are a little technical - this is why we recommend
+using Docker Desktop (see above)
 
 1. Install [Claude Desktop](https://claude.ai/download) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 2. Install [uv](https://github.com/astral-sh/uv) 
 3. Clone the MCP Server for Cylera
-
-## Docker MCP Gateway
-
-We are exploring using [Docker MCP Gateway](https://docs.docker.com/ai/mcp-gateway/) to make it easier to deploy and
-secure.
-
-To publish in the [mcp-registry](https://github.com/docker/mcp-registry/blob/main/CONTRIBUTING.md), requires the MCP server to be containerized. Here's how to build and run it.
-
-    docker build -t mcp-cylera-server .
-    docker run -it -e CYLERA_USERNAME=<username> -e CYLERA_PASSWORD=<password> -e CYLERA_BASE_URL=https://partner.demo.cylera.com/ mcp-cylera-server
-
 
 ## Configuration
 
@@ -504,6 +508,7 @@ The following API endpoints are currently integrated into the MCP server.
 | **GET** | `/inventory/device_attributes` | Get attributes for device - This endpoint returns the attributes for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 | **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
 | **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
+| **GET** | `/risk/vulnerabilities` | Get vulnerabilities - Returns vulnerability information with optional filtering by confidence, detection time, MAC address, name, severity, and status. |
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.
 
@@ -511,10 +516,8 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 |-------------|-----|-------------|
 | **DELETE** | `/inventory/device_attributes` | Delete custom attribute for a device - This endpoint deletes a single custom attribute for a single device. If the provided parameters don't match an existing attribute, then nothing will be deleted. Note that if the attribute is a Cylera-created attribute, it won't be deleted. |
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
-| **GET** | `/risk/vulnerabilities` | Get vulnerabilities - Returns vulnerability information with optional filtering by confidence, detection time, MAC address, name, severity, and status. |
 | **POST** | `/risk/vulnerability` | Update vulnerability - Updates the status of a specific vulnerability using its UUID. |
 | **POST** | `/threat/threat` | Update threat - Updates the status of a specific threat using its UUID. |
 | **GET** | `/threat/threats` | Get threats - Returns threat information with optional filtering by detection time, MAC address, name, severity, and status. |
-
 
 [tutorial]: tutorial.webp
