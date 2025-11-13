@@ -1,6 +1,6 @@
 # server.py
 from sys import stderr
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from typing import Optional, Literal
 from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network
 from dotenv import load_dotenv
@@ -148,8 +148,7 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(
-        params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
