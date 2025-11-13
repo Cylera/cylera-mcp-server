@@ -8,6 +8,7 @@ The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cyl
 - [Examples](#examples)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Testing](#testing)
 - [Coverage](#coverage)
 
 ## Demo
@@ -484,17 +485,26 @@ see something similar to:
 
 If you press Ctrl+t, you should see the Cylera MCP server details.
 
-## Running unit tests
+## Testing
 
-    uv run pytest
-    ============================= test session starts ==============================
-    platform darwin -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0
-    rootdir: /Users/jasonchambers/repos/cylera-mcp-server
-    configfile: pyproject.toml
-    plugins: anyio-4.9.0, dotenv-0.5.2
-    collected 1 item
-    
-    test_cylera_client.py .                                                  [100%]
+We have unit tests which essentially verify the REST API client
+(test_cylera_client.py) works ok.
+
+In addition, we have tests which verify the MCP server itself works as expected by an
+MCP client (test_mcp_server.py). 
+
+Run the testsuite as follows:
+
+    uv run pytest -v -s
+
+We do not run any integration tests directly from an LLM as a) this is too slow b)
+cumbersome and c) potentially expensive. Once the tests pass, it is highly
+likely there will be no issues plugging in the MCP server into a host such as
+Claude.
+
+When publishing a new version in the Docker MCP registry, extra testing is
+required of the Docker image. See [DEVELOPER.md](DEVELOPER.md) for details.
+
 
 ## Coverage
 

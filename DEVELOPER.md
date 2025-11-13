@@ -50,8 +50,14 @@ Once the changes have been made, it is committed and pushed up to the Cylera for
 where a PR is created as part of the process of getting the new version published in the
 Docker MCP Registry.
 
-To test changes locally before creating the PR, follow these steps within a
+To test changes locally before creating the PR follow these steps within a
 clone of the fork:
+
+1. Commit and push the changes to the MCP server up to cylera-mcp-server
+2. Record the commit hash
+3. Update the servers/cylera-mcp-server/server.yaml with the new commit hash.
+4. Then run these commands on the command line within the mcp-registry
+   directory:
 
     task build -- --tools cylera-mcp-server
     task catalog -- cylera-mcp-server
@@ -59,4 +65,5 @@ clone of the fork:
     echo "Now re-launch Docker Desktop and see if cylera-mcp-server is there"
     echo "Once tested, Reset your catalog in Docker Desktop with: task reset"
 
-[
+Note that the MCP server is run as a Docker container - and so it is important
+to build and test the image locally before submitting the PR.
