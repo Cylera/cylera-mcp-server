@@ -1,12 +1,13 @@
 #FROM alpine:latest
 #FROM ghcr.io/astral-sh/uv:0.9.9-python3.14-trixie
-FROM ghcr.io/astral-sh/uv:alpine
+#FROM ghcr.io/astral-sh/uv:alpine
+FROM python:3.13-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Install uv for package management
-#RUN pip install uv
+RUN pip install uv
 #RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Copy the dependency files
@@ -20,11 +21,11 @@ RUN uv sync --frozen --no-dev
 COPY . .
 
 # Create non-root user
-#RUN useradd -m -u 1000 mcpuser && \
-    #chown -R mcpuser:mcpuser /app
+RUN useradd -m -u 1000 mcpuser && \
+    chown -R mcpuser:mcpuser /app
 
 # Switch to non-root user
-#USER mcpuser
+USER mcpuser
 
 # The server expects the following environment variables to be set at runtime:
 # - CYLERA_USERNAME

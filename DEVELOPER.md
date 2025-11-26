@@ -1,6 +1,41 @@
+
+## Testing
+
+We have unit tests which essentially verify the REST API client
+(test_cylera_client.py) works ok.
+
+In addition, we have tests which verify the MCP server itself works as expected by an
+MCP client (test_mcp_server.py). 
+
+Run the testsuite as follows:
+
+    uv run pytest -v -s
+
+We do not run any integration tests directly from an LLM as a) this is too slow b)
+cumbersome and c) potentially expensive. Once the tests pass, it is highly
+likely there will be no issues plugging in the MCP server into a host such as
+Claude.
+
+If changes are made to the Dockerfile, it is important to test the Docker image
+as follows:
+
+    docker build -t cylera.com/cylera-mcp-server:latest .
+    test_docker_container.sh
+
+This is just a sanity test to make sure the Docker image has been built and
+will run ok.
+
+Once the tests run ok, create a PR. Once merged, record the commit hash to
+ensure this latest version is used by the Docker MCP registry.
+
+You may choose to use [MCP
+Inspector](https://modelcontextprotocol.io/docs/tools/inspector#npm-package) by
+launching this script:
+
+    mcpinspector.sh
+
 ## Publishing to the MCP Registry
 
-This information is not relevant for general usage of the Cylera MCP server.
 This information is for Cylera developers who wish to publish a new version to
 the Docker MCP Registry.
 
@@ -46,24 +81,22 @@ need to be updated.
 
 Note that Docker takes care of building the image. The Cylera team simply maintains the Dockerfile.
 
-Once the changes have been made, it is committed and pushed up to the Cylera fork and
-where a PR is created as part of the process of getting the new version published in the
-Docker MCP Registry.
+We are still seeking documentation from the Docker team for clarity regarding
+the process of releasing new versions.
 
 To test changes locally before creating the PR follow these steps within a
 clone of the fork:
 
-1. Commit and push the changes to the MCP server up to cylera-mcp-server
-2. Record the commit hash
-3. Update the servers/cylera-mcp-server/server.yaml with the new commit hash.
-4. Then run these commands on the command line within the mcp-registry
+1. Update the servers/cylera-mcp-server/server.yaml with the new commit hash.
+2. Then run these commands on the command line within the mcp-registry
    directory:
 
-    task build -- --tools cylera-mcp-server
-    task catalog -- cylera-mcp-server
-    docker mcp catalog import $PWD/catalogs/cylera-mcp-server/catalog.yaml
-    echo "Now re-launch Docker Desktop and see if cylera-mcp-server is there"
-    echo "Once tested, Reset your catalog in Docker Desktop with: task reset"
+       task build -- --tools cylera-mcp-server
+       task catalog -- cylera-mcp-server
+       docker mcp catalog import $PWD/catalogs/cylera-mcp-server/catalog.yaml
 
-Note that the MCP server is run as a Docker container - and so it is important
-to build and test the image locally before submitting the PR.
+   Now re-launch Docker Desktop and see if cylera-mcp-server is there
+   Once tested, Reset your catalog in Docker Desktop with
+
+       task reset
+

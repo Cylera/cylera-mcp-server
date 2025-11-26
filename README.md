@@ -497,15 +497,6 @@ Run the testsuite as follows:
 
     uv run pytest -v -s
 
-We do not run any integration tests directly from an LLM as a) this is too slow b)
-cumbersome and c) potentially expensive. Once the tests pass, it is highly
-likely there will be no issues plugging in the MCP server into a host such as
-Claude.
-
-When publishing a new version in the Docker MCP registry, extra testing is
-required of the Docker image. See [DEVELOPER.md](DEVELOPER.md) for details.
-
-
 ## Coverage
 
 The following API endpoints are currently integrated into the MCP server.
