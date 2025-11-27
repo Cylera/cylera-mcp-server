@@ -24,6 +24,12 @@ as follows from the top-level directory of the repo:
 This is just a sanity test to make sure the Docker image has been built and
 will run ok.
 
+For convenience, you can run all the tests as follows:
+
+    ./test.sh
+
+Check the $? variable - if 0, all tests have passed.
+
 Once the tests run ok, create a PR. Once merged, record the commit hash to
 ensure this latest version is used by the Docker MCP registry.
 
