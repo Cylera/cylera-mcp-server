@@ -1,6 +1,3 @@
-#FROM alpine:latest
-#FROM ghcr.io/astral-sh/uv:0.9.9-python3.14-trixie
-#FROM ghcr.io/astral-sh/uv:alpine
 FROM python:3.13-slim
 
 # Set the working directory in the container

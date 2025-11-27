@@ -17,10 +17,10 @@ likely there will be no issues plugging in the MCP server into a host such as
 Claude.
 
 If changes are made to the Dockerfile, it is important to test the Docker image
-as follows:
+as follows from the top-level directory of the repo:
 
     docker build -t cylera.com/cylera-mcp-server:latest .
-    test_docker_container.sh
+    ./test_docker_container.sh
 
 This is just a sanity test to make sure the Docker image has been built and
 will run ok.
