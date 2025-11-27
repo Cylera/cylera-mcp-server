@@ -1,5 +1,9 @@
+# These tests depend on data that exists in the demo environment
+# CYLERA_BASE_URL="https://partner.demo.cylera.com/"
+#
 # Test with
 # $ uv run pytest -v -s
+
 import pytest
 import pytest_asyncio  # Add this import
 from fastmcp.client import Client

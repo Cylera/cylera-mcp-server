@@ -1,3 +1,9 @@
+# These tests depend on data that exists in the demo environment
+# CYLERA_BASE_URL="https://partner.demo.cylera.com/"
+#
+# Test with
+# $ uv run pytest -v -s
+
 import unittest
 import os
 import json

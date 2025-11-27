@@ -5,22 +5,34 @@ from typing import Optional, Literal
 from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network
 from dotenv import load_dotenv
 import os
-import datetime
 
-# Create an MCP server
+
+def get_env_var(env_var_name: str):
+    value = os.environ.get(env_var_name)
+    if not value:
+        print(
+            f"Error: Required environment variable '{
+                env_var_name
+            }' is not set or is empty",
+            file=stderr,
+        )
+        exit(1)
+    return str(value)
+
+
+def create_client():
+    """Create client to the Cylera REST API"""
+    load_dotenv()
+
+    username = get_env_var("CYLERA_USERNAME")
+    password = get_env_var("CYLERA_PASSWORD")
+    base_url = get_env_var("CYLERA_BASE_URL")
+    return CyleraClient(username, password, base_url)
+
+
+# Initialize
 mcp = FastMCP("Cylera")
-
-# Load environment variables from .env if present
-load_dotenv()
-
-# Initialize the client with your API key
-client = CyleraClient(
-    username=os.environ.get("CYLERA_USERNAME"),
-    password=os.environ.get("CYLERA_PASSWORD"),
-    base_url=os.environ.get("CYLERA_BASE_URL"),
-)
-
-# Create an Inventory helper using the client
+client = create_client()
 inventory = Inventory(client)
 utilization = Utilization(client)
 risk = Risk(client)
@@ -148,7 +160,8 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(
+        params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
