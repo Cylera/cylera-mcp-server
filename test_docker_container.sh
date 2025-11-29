@@ -11,7 +11,7 @@ read -r -d '' TEST_RPC_MESSAGES <<EOF
 EOF
 
 #
-# The tests depend on Docker running. Fail fast if is not.
+# The tests depend on Docker running. Fail fast if it is not.
 #
 ensure_docker_is_running() {
   if ! docker info >/dev/null 2>&1; then
