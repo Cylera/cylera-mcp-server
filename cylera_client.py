@@ -3,6 +3,8 @@ Cylera API Client
 
 This module provides a Python client for interacting with the Cylera Partner
 API https://partner.us1.cylera.com/apidocs/
+
+Turn on debugging by setting the environment variable DEBUG=1
 """
 
 from typing import Any, Dict, List, Optional
@@ -11,13 +13,20 @@ from datetime import datetime, timedelta
 from sys import stderr
 
 import requests
+import os
 from requests.exceptions import RequestException
 
 
 def print_request_details(response, *args, **kwargs):
+    if not os.environ.get("DEBUG"):
+        return
+    headers = dict(response.request.headers)
+    if "Authorization" in headers:
+        headers["Authorization"] = "[REDACTED]"
     print(f"Request URL: {response.request.url}", file=stderr)
-    print(f"Request Headers: {dict(response.request.headers)}", file=stderr)
-    if response.request.body:
+    print(f"Request Headers: {headers}", file=stderr)
+    # Never log request body for auth endpoints
+    if "auth/login" not in response.request.url and response.request.body:
         print(f"Request Body: {response.request.body}", file=stderr)
 
 
@@ -87,16 +96,14 @@ class CyleraClient:
             data = response.json()
 
             if "token" not in data:
-                raise CyleraAuthError(
-                    "No token received in authentication response")
+                raise CyleraAuthError("No token received in authentication response")
 
             self._token = data["token"]
             # Set token expiry to 23 hours (assuming 24-hour token validity)
             self._token_expiry = datetime.now() + timedelta(hours=23)
 
             # Update session headers with the new token
-            self.session.headers.update(
-                {"Authorization": f"Bearer {self._token}"})
+            self.session.headers.update({"Authorization": f"Bearer {self._token}"})
 
         except requests.exceptions.HTTPError as e:
             raise CyleraAuthError(f"Authentication failed: {str(e)}")
