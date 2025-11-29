@@ -15,7 +15,7 @@ EOF
 #
 ensure_docker_is_running() {
   if ! docker info >/dev/null 2>&1; then
-    echo "ERROR: Docker daemon not running"
+    echo "ERROR: Docker daemon not running" >&2
     exit 1
   fi
 }
@@ -24,21 +24,25 @@ ensure_docker_is_running() {
 # Returns 0 if successful, non-zero if FAILED
 #
 build_docker_image() {
-  docker build -t ${IMAGE_NAME} .
+  docker build -t "${IMAGE_NAME}" .
 }
 
 #
 # Returns 0 if successful, non-zero if FAILED
 #
 test_docker_image() {
-  tmpfile=$(mktemp) || exit 1
-  trap "rm -f '$tmpfile'" EXIT
-  docker run -i ${IMAGE_NAME} <<<${TEST_RPC_MESSAGES} >"$tmpfile" 2>&1
-  grep "Get details about a device by MAC address" $tmpfile >/dev/null
+  TMPFILE=$(mktemp) || exit 1
+  # shellcheck disable=SC2329
+  cleanup() {
+    rm -f "$TMPFILE"
+  }
+  trap cleanup EXIT
+  docker run -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
+  grep -q "Get details about a device by MAC address" "${TMPFILE}"
 }
 
 #
-# First we test the Dockerfile to make sure we can build the image successfuly.
+# First we test the Dockerfile to make sure we can build the image successfully.
 # Next, we run it and simply ensure it responds as expected to sample RPC messages
 # over stdin - thereby emulating how an MCP client such as Claude interacts
 # with the MCP server.
@@ -56,7 +60,7 @@ main() {
   else
     echo "PASSED: Docker container test"
   fi
-  exit $result
+  exit "$result"
 }
 
 main "$@"
