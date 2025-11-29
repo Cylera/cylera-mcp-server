@@ -5,13 +5,11 @@ WORKDIR /app
 
 # Install uv for package management
 RUN pip install uv
-#RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Copy the dependency files
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies using uv
-# RUN uv pip install --system --no-cache -r pyproject.toml
 RUN uv sync --frozen --no-dev
 
 # Copy the rest of the application code
