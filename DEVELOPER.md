@@ -13,7 +13,7 @@ In addition, you will need credentials (username,password) for this environment 
 ## Unit tests
 
 The goal of the unit tests contained in [test_cylera_client.py](test_cylera_client.py) is to verify the REST API client
-`cylera_client.py`. 
+[cylera_client.py](cylera_client.py). 
 
 The tests are run as follows (note this command will also run the component
 tests):
@@ -23,8 +23,8 @@ tests):
 ## Component tests
 
 The goal of the components tests contained in
-`test_mcp_server.py` is to verify the MCP server itself
-`server.py`. In this test, `test_mcp_server.py`
+[test_mcp_server.py](test_mcp_server.py) is to verify the MCP server itself
+[server.py](server.py). In this test, [test_mcp_server.py](test_mcp_server.py)
 takes on the role of MCP client which is precisely how a host such Claude
 Desktop interacts with the MCP server.
 
@@ -37,10 +37,10 @@ tests):
 
 We do not build and publish a Docker image. Docker (the company)
 takes care of this for the purpose of publishing within their MCP Registry
-making it available within Docker Desktop. We just need to provide a `Dockerfile`.
+making it available within Docker Desktop. We just need to provide a [Dockerfile](Dockerfile).
 
 If changes are made to the Dockerfile, it is important to test the Docker image
-using the `test_docker_container.sh` script as follows:
+using the [test_docker_container.sh](test_docker_container.sh) script as follows:
 
     ./test_docker_container.sh
 
@@ -130,10 +130,10 @@ To test changes locally:
 
 ## Integration testing with an LLM
 
-To test with an LLM, use the prompt `test_llm_integration.md`. This will prompt
+To test with an LLM, use the prompt [test_llm_integration.md](test_llm_integration.md). This will prompt
 the LLM to run the tests, verify the response and summarize the test results.
 
-For Claude Desktop, simply drag and drop the `test_llm_integration.md` file
+For Claude Desktop, simply drag and drop the [test_llm_integration.md](test_llm_integration.md) file
 into Claude Desktop.
 
 For Gemini, simply prompt:
