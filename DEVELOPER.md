@@ -12,7 +12,7 @@ In addition, you will need credentials (username,password) for this environment 
 
 ## Unit tests
 
-The goal of the unit tests contained in `test_cylera_client.py` is to verify the REST API client
+The goal of the unit tests contained in [test_cylera_client.py](test_cylera_client.py) is to verify the REST API client
 `cylera_client.py`. 
 
 The tests are run as follows (note this command will also run the component
