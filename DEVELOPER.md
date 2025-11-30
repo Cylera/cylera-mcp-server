@@ -1,48 +1,74 @@
+# Testing and development
 
-## Testing
+There are several layers of testing each with their own testing goals. All of
+these tests depend on data that resides in the demo environment. The tests will
+fail if the environment is not set to point to https://partner.demo.cylera.com/
+for both  TEST_CYLERA_BASE_URL and CYLERA_BASE_URL:
 
-We have unit tests which essentially verify the REST API client
-(test_cylera_client.py) works ok.
+    TEST_CYLERA_BASE_URL="https://partner.demo.cylera.com"
+    CYLERA_BASE_URL="https://partner.demo.cylera.com/"
 
-In addition, we have tests which verify the MCP server itself works as expected by an
-MCP client (test_mcp_server.py). 
+In addition, you will need credentials (username,password) for this environment to be configured.
 
-Run the testsuite as follows:
+## Unit tests
+
+The goal of the unit tests contained in `test_cylera_client.py` is to verify the REST API client
+`cylera_client.py`. 
+
+The tests are run as follows (note this command will also run the component
+tests):
 
     uv run pytest -v -s
 
-We do not run any integration tests directly from an LLM as a) this is too slow b)
-cumbersome and c) potentially expensive. Once the tests pass, it is highly
-likely there will be no issues plugging in the MCP server into a host such as
-Claude.
+## Component tests
+
+The goal of the components tests contained in
+`test_mcp_server.py` is to verify the MCP server itself
+`server.py`. In this test, `test_mcp_server.py`
+takes on the role of MCP client which is precisely how a host such Claude
+Desktop interacts with the MCP server.
+
+The tests are run as follows (note this command will also run the unit
+tests):
+
+    uv run pytest -v -s
+
+## Docker image testing
+
+We do not build and publish a Docker image. Docker (the company)
+takes care of this for the purpose of publishing within their MCP Registry
+making it available within Docker Desktop. We just need to provide a `Dockerfile`.
 
 If changes are made to the Dockerfile, it is important to test the Docker image
-as follows from the top-level directory of the repo:
+using the `test_docker_container.sh` script as follows:
 
     ./test_docker_container.sh
 
-This is just a sanity test to make sure the Docker image has been built and
+This is just a smoke test to make sure the Docker image has been built and
 will run ok.
+
+## Running unit, component and Docker tests in one command
 
 For convenience, you can run all the tests as follows:
 
     ./test.sh
 
+This makes it ideal to incorporate into a CI/CD pipeline.
+
 Check the $? variable - if 0, all tests have passed.
 
-Once the tests run ok, create a PR. Once merged, record the commit hash to
-ensure this latest version is used by the Docker MCP registry.
+Once the tests run ok, create a PR. 
 
-You may choose to use [MCP
-Inspector](https://modelcontextprotocol.io/docs/tools/inspector#npm-package) by
+## Debugging
+
+You may choose to use [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector#npm-package) by
 launching this script:
 
     mcpinspector.sh
 
-## Publishing to the MCP Registry
+This might be handy for debugging.
 
-This information is for Cylera developers who wish to publish a new version to
-the Docker MCP Registry.
+## Publishing to the MCP Registry
 
 In compliance with [Docker's guidelines](https://github.com/docker/mcp-registry/blob/main/CONTRIBUTING.md), a fork is maintained by Cylera [fork](https://github.com/Cylera/mcp-registry) of the [Official Docker MCP Registry](https://github.com/docker/mcp-registry).
 
@@ -82,15 +108,12 @@ The following is an example of the contents of the file:
 
 The file is pretty self-explanatory. If a new version of the Cylera
 MCP server is released, the commit hash corresponding to the new version would
-need to be updated.
+need to be updated. This is handled automatically when we push to the
+cylera-mcp-server registry. We would only need to modify the server.yaml if we
+want to change other aspects of the MCP server such as the icon used or the
+configuration.
 
-Note that Docker takes care of building the image. The Cylera team simply maintains the Dockerfile.
-
-We are still seeking documentation from the Docker team for clarity regarding
-the process of releasing new versions.
-
-To test changes locally before creating the PR follow these steps within a
-clone of the fork:
+To test changes locally:
 
 1. Update the servers/cylera-mcp-server/server.yaml with the new commit hash.
 2. Then run these commands on the command line within the mcp-registry
@@ -104,4 +127,16 @@ clone of the fork:
    Once tested, Reset your catalog in Docker Desktop with
 
        task reset
+
+## Integration testing with an LLM
+
+To test with an LLM, use the prompt `test_llm_integration.md`. This will prompt
+the LLM to run the tests, verify the response and summarize the test results.
+
+For Claude Desktop, simply drag and drop the `test_llm_integration.md` file
+into Claude Desktop.
+
+For Gemini, simply prompt:
+
+    > Read the prompt contained in @test_llm_integration.md
 
