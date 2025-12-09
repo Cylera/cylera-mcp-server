@@ -1,3 +1,12 @@
+# A Note about requirements.txt 
+
+This project is uv based and uses pyproject.toml to manage the dependencies.
+Some tools have yet to adopt this more modern approach and therefore rely on
+requirements.txt. Snyk is an example. To enable Snyk to scan the project, a
+requirements.txt is created as follows:
+
+    python -m piptools compile > requirements.txt
+
 # Testing and development
 
 There are several layers of testing each with their own testing goals. All of
