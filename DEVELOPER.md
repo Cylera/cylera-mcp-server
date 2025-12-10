@@ -1,11 +1,17 @@
-# A Note about requirements.txt 
+# Vulnerability management
 
-This project is uv based and uses pyproject.toml to manage the dependencies.
-Some tools have yet to adopt this more modern approach and therefore rely on
-requirements.txt. Snyk is an example. To enable Snyk to scan the project, a
-requirements.txt is created as follows:
+To scan for packages with known vulnerabilities, pip-audit should be run as
+follows:
 
-    python -m piptools compile > requirements.txt
+    pip-audit
+
+If vulnerabilities are discovered, dependencies can be updates using uv as
+follows:
+
+    uv sync --upgrade-package <package-name>
+
+All tests must be run to ensure it still works - see the "Testing and development"
+section below.
 
 # Testing and development
 
