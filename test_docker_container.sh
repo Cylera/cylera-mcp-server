@@ -33,7 +33,7 @@ dot_env_help() {
 # be part of the Docker image
 #
 ensure_dot_env_file_exists() {
-  if [ -f .env ]; then
+  if [[ -f .env ]]; then
     if grep -q "CYLERA_USERNAME" .env &&
       grep -q "CYLERA_PASSWORD" .env &&
       grep -q "CYLERA_BASE_URL" .env; then
