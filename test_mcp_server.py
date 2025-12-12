@@ -38,6 +38,4 @@ async def test_get_device(main_mcp_client: Client[FastMCPTransport]):
             key = key.strip("- ").strip()
             value = value.strip()
             device_data[key] = value
-        else:
-            pass
     assert device_data["hostname"] == "TONNMZDPPS"
