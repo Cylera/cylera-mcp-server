@@ -20,6 +20,35 @@ ensure_docker_is_running() {
   fi
 }
 
+dot_env_help() {
+  echo "It needs to contain the following:" >&2
+  echo "CYLERA_BASE_URL=https://partner.demo.cylera.com/" >&2
+  echo "CYLERA_USERNAME=<username>" >&2
+  echo "CYLERA_PASSWORD=<password>" >&2
+}
+#
+# Ensure there is a .env fail available to support
+# testing because the .env file is not (should not)
+# be part of the Docker image
+#
+ensure_dot_env_file_exists() {
+  if [ -f .env ]; then
+    if grep -q "CYLERA_USERNAME" .env &&
+      grep -q "CYLERA_PASSWORD" .env &&
+      grep -q "CYLERA_BASE_URL" .env; then
+      echo "All required variables are present"
+    else
+      echo "Missing one or more required variables" >&2
+      dot_env_help
+      exit 1
+    fi
+  else
+    echo ".env file does not exist" >&2
+    echo "Unable to test the server without one" >&2
+    dot_env_help
+    exit 1
+  fi
+}
 #
 # Returns 0 if successful, non-zero if FAILED
 #
@@ -37,8 +66,8 @@ test_docker_image() {
     rm -f "$TMPFILE"
   }
   trap cleanup EXIT
-  docker run -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
-  grep -q "Get details about a device by MAC address" "${TMPFILE}"
+  docker run --env-file .env -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
+  grep -q "hostname: TONNMZDPPS" "${TMPFILE}"
 }
 
 #
@@ -48,6 +77,7 @@ test_docker_image() {
 # with the MCP server.
 #
 main() {
+  ensure_dot_env_file_exists
   ensure_docker_is_running
   build_docker_image
   local result=$?
