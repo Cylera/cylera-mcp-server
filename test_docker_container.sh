@@ -18,6 +18,7 @@ ensure_docker_is_running() {
     echo "ERROR: Docker daemon not running" >&2
     exit 1
   fi
+  return 0
 }
 
 dot_env_help() {
