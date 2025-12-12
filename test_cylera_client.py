@@ -84,7 +84,6 @@ class TestGetSubnets(unittest.TestCase):
         )
         network = Network(client)
         result = network.get_subnets(vlan="477", page=0)
-        # result = network.get_subnets(page=0)
         print(json.dumps(result, indent=2))
         self.assertIn("subnets", result)
 
