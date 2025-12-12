@@ -25,6 +25,7 @@ dot_env_help() {
   echo "CYLERA_BASE_URL=https://partner.demo.cylera.com/" >&2
   echo "CYLERA_USERNAME=<username>" >&2
   echo "CYLERA_PASSWORD=<password>" >&2
+  return 0
 }
 #
 # Ensure there is a .env fail available to support
@@ -48,12 +49,14 @@ ensure_dot_env_file_exists() {
     dot_env_help
     exit 1
   fi
+  return 0
 }
 #
 # Returns 0 if successful, non-zero if FAILED
 #
 build_docker_image() {
   docker build -t "${IMAGE_NAME}" .
+  return $?
 }
 
 #
@@ -64,10 +67,12 @@ test_docker_image() {
   # shellcheck disable=SC2329
   cleanup() {
     rm -f "$TMPFILE"
+    return 0
   }
   trap cleanup EXIT
   docker run --env-file .env -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
   grep -q "hostname: TONNMZDPPS" "${TMPFILE}"
+  return $?
 }
 
 #
@@ -90,7 +95,8 @@ main() {
   else
     echo "PASSED: Docker container test"
   fi
-  exit "$result"
+  return "$result"
 }
 
 main "$@"
+exit $?
