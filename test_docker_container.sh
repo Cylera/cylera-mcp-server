@@ -87,11 +87,11 @@ main() {
   ensure_docker_is_running
   build_docker_image
   local result=$?
-  if [ "${result}" -eq 0 ]; then
+  if [[ "${result}" -eq 0 ]]; then
     test_docker_image
     result=$?
   fi
-  if [ "${result}" -ne 0 ]; then
+  if [[ "${result}" -ne 0 ]]; then
     echo "FAILED: Docker container test"
   else
     echo "PASSED: Docker container test"
