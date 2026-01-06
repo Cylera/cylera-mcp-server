@@ -3,7 +3,7 @@
 To scan for packages with known vulnerabilities, pip-audit should be run as
 follows:
 
-    pip-audit
+    uvx pip-audit
 
 If vulnerabilities are discovered, dependencies can be updates using uv as
 follows:
@@ -33,6 +33,10 @@ The goal of the unit tests contained in [test_cylera_client.py](test_cylera_clie
 The tests are run as follows (note this command will also run the component
 tests):
 
+    uv run pytest -v 
+
+Or if you want to see the full log output
+
     uv run pytest -v -s
 
 ## Component tests
@@ -45,6 +49,10 @@ Desktop interacts with the MCP server.
 
 The tests are run as follows (note this command will also run the unit
 tests):
+
+    uv run pytest -v 
+
+Or if you want to see the full log output
 
     uv run pytest -v -s
 

@@ -6,9 +6,18 @@
 
 import pytest
 import pytest_asyncio  # Add this import
+import sys
 from fastmcp.client import Client
 from fastmcp.client.transports import FastMCPTransport
 from server import mcp
+
+# Check if verbose flag is present
+VERBOSE = '-v' in sys.argv or '--verbose' in sys.argv
+
+def log(message):
+    """Print message only if verbose flag is set"""
+    if VERBOSE:
+        print(message)
 
 
 @pytest_asyncio.fixture  # Change this
@@ -20,7 +29,7 @@ async def main_mcp_client():
 @pytest.mark.asyncio  # Add this decorator
 async def test_list_tools(main_mcp_client: Client[FastMCPTransport]):
     list_tools = await main_mcp_client.list_tools()
-    print(list_tools)
+    log(list_tools)
     assert len(list_tools) == 7
 
 

@@ -5,4 +5,4 @@
 #
 
 ./test_docker_container.sh || exit 1
-uv run pytest -v -s || exit 1
+uv run pytest -v || exit 1

@@ -7,7 +7,16 @@
 import unittest
 import os
 import json
+import sys
 from cylera_client import CyleraClient, Inventory, Utilization, Network, Risk
+
+# Check if verbose flag is present
+VERBOSE = '-v' in sys.argv or '--verbose' in sys.argv
+
+def log(message):
+    """Print message only if verbose flag is set"""
+    if VERBOSE:
+        print(message)
 
 
 class TestGetDevice(unittest.TestCase):
@@ -22,7 +31,7 @@ class TestGetDevice(unittest.TestCase):
         inventory = Inventory(client)
         result = inventory.get_device(mac_address)
 
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("device", result)
         self.assertIn("aetitle", result["device"])
 
@@ -37,7 +46,7 @@ class TestGetProcedures(unittest.TestCase):
         utilization = Utilization(client)
         params = {"device_uuid": "ffc20dfe-4c24-11ec-8a38-5eeeaabea551"}
         result = utilization.get_procedures(params=params)
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("procedures", result)
 
 
@@ -53,7 +62,7 @@ class TestGetDeviceAttributes(unittest.TestCase):
         inventory = Inventory(client)
         result = inventory.get_device_attributes(mac_address)
 
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("device_attributes", result)
 
 
@@ -71,7 +80,7 @@ class TestGetDevices(unittest.TestCase):
             model="Panasonic IP Camera", page=1, page_size=50
         )
 
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("devices", result)
 
 
@@ -84,7 +93,7 @@ class TestGetSubnets(unittest.TestCase):
         )
         network = Network(client)
         result = network.get_subnets(vlan="477", page=0)
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("subnets", result)
 
 
@@ -97,7 +106,7 @@ class TestGetMitigations(unittest.TestCase):
         )
         risk = Risk(client)
         result = risk.get_mitigations(vulnerability="CVE-2017-2852")
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("mitigations", result)
 
 
@@ -110,7 +119,7 @@ class TestGetVulnerabilities(unittest.TestCase):
         )
         risk = Risk(client)
         result = risk.get_vulnerabilities(severity="CRITICAL")
-        print(json.dumps(result, indent=2))
+        log(json.dumps(result, indent=2))
         self.assertIn("vulnerabilities", result)
 
 
