@@ -208,7 +208,7 @@ def get_vulnerabilities(
     page_size: Optional[int] = 20,
     severity: Optional[Literal["CRITICAL", "HIGH", "MEDIUM", "LOW"]] = None,
     status: Optional[str] = None,
-) -> str:
+) -> dict:
     """
     Returns a paginated list of vulnerabilities. The response includes:
     - data: list of vulnerabilities for the current page
