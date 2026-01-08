@@ -117,7 +117,7 @@ class CyleraClient:
         params: Optional[Dict[str, Any]] = None,
         json: Optional[Dict[str, Any]] = None,
         **kwargs,
-    ) -> List[Dict[str, Any]]:
+    ) -> Any:
         """
         Make an HTTP request to the Cylera API.
 
@@ -396,7 +396,7 @@ class Risk:
         page_size: Optional[int] = None,
         severity: Optional[str] = None,
         status: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
         Get a list of vulnerabilities.
 

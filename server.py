@@ -160,8 +160,7 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(
-        params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
@@ -204,8 +203,8 @@ def get_vulnerabilities(
     detected_after: Optional[int] = None,
     mac_address: Optional[str] = None,
     name: Optional[str] = None,
-    page: Optional[int] = 1,
-    page_size: Optional[int] = 20,
+    page: int = 1,
+    page_size: int = 20,
     severity: Optional[Literal["CRITICAL", "HIGH", "MEDIUM", "LOW"]] = None,
     status: Optional[str] = None,
 ) -> dict:

@@ -11,7 +11,8 @@ import sys
 from cylera_client import CyleraClient, Inventory, Utilization, Network, Risk
 
 # Check if verbose flag is present
-VERBOSE = '-v' in sys.argv or '--verbose' in sys.argv
+VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
+
 
 def log(message):
     """Print message only if verbose flag is set"""

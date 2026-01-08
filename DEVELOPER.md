@@ -13,6 +13,22 @@ follows:
 All tests must be run to ensure it still works - see the "Testing and development"
 section below.
 
+# Code quality and test_cylera_client
+
+For the Python code, [Ruff](https://github.com/astral-sh/ruff) is used:
+
+    uvx ruff check   # Lint all files in the current directory.
+    uvx ruff format  # Format all files in the current directory.
+
+For checking types in the Python code, [pyright](https://github.com/microsoft/pyright) is used:
+
+    uvx pyright .
+
+For the shell scripts, [shellcheck](https://github.com/koalaman/shellcheck) is
+used:
+
+    shellcheck *.sh
+
 # Testing and development
 
 There are several layers of testing each with their own testing goals. All of
