@@ -77,6 +77,19 @@ class CyleraClient:
         self._token = None
         self._token_expiry = None
 
+    def _is_token_valid(self) -> bool:
+        """Check if the current token is valid and not expired."""
+        return bool(
+            self._token and self._token_expiry and datetime.now() < self._token_expiry
+        )
+
+    def _store_token(self, token: str) -> None:
+        """Store the authentication token and update session headers."""
+        self._token = token
+        # Set token expiry to 23 hours (assuming 24-hour token validity)
+        self._token_expiry = datetime.now() + timedelta(hours=23)
+        self.session.headers.update({"Authorization": f"Bearer {token}"})
+
     def _authenticate(self) -> None:
         """
         Authenticate with the Cylera API and get a session token.
@@ -84,7 +97,7 @@ class CyleraClient:
         Raises:
             CyleraAuthError: If authentication fails
         """
-        if self._token and self._token_expiry and datetime.now() < self._token_expiry:
+        if self._is_token_valid():
             return
 
         try:
@@ -98,12 +111,7 @@ class CyleraClient:
             if "token" not in data:
                 raise CyleraAuthError("No token received in authentication response")
 
-            self._token = data["token"]
-            # Set token expiry to 23 hours (assuming 24-hour token validity)
-            self._token_expiry = datetime.now() + timedelta(hours=23)
-
-            # Update session headers with the new token
-            self.session.headers.update({"Authorization": f"Bearer {self._token}"})
+            self._store_token(data["token"])
 
         except requests.exceptions.HTTPError as e:
             raise CyleraAuthError(f"Authentication failed: {str(e)}")
