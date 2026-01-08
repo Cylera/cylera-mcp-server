@@ -6,3 +6,5 @@
 
 ./test_docker_container.sh || exit 1
 uv run pytest -v || exit 1
+uvx ruff check || exit 1
+uvx pyright . || exit 1

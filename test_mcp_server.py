@@ -9,6 +9,7 @@ import pytest_asyncio  # Add this import
 import sys
 from fastmcp.client import Client
 from fastmcp.client.transports import FastMCPTransport
+from mcp.types import TextContent
 from server import mcp
 
 # Check if verbose flag is present
@@ -40,6 +41,7 @@ async def test_get_device(main_mcp_client: Client[FastMCPTransport]):
         "get_device", {"mac_address": "82:32:27:2b:20:8f"}
     )
     device_data = {}
+    assert isinstance(result.content[0], TextContent)
     lines = result.content[0].text.split("\n")
     for line in lines:
         if ":" in line:

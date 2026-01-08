@@ -184,7 +184,7 @@ class Inventory:
     def __init__(self, client: CyleraClient):
         self.client = client
 
-    def get_device(self, device_id: str) -> List[Dict[str, Any]]:
+    def get_device(self, device_id: str) -> Dict[str, Any]:
         """
         Get details for a specific device.
 
@@ -192,7 +192,30 @@ class Inventory:
             device_id: The ID of the device to retrieve (MAC address)
 
         Returns:
-            Device object
+            Device object similar to this:
+            "device": {
+                 "aetitle": "TGXYNUGMIK",
+                 "class": "Medical",
+                 "fda_class": null,
+                 "first_seen": 1635056234.0,
+                 "hostname": "TGXYNUGMIK",
+                 "id": "ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+                 "ip_address": "10.40.6.159",
+                 "last_seen": 1767887269.0,
+                 "location": "Location 2",
+                 "mac_address": "7f:14:22:72:00:e5",
+                 "model": "Allura Xper X-Ray System",
+                 "os": "Windows XP",
+                 "outdated": true,
+                 "risk": 4,
+                 "serial_number": null,
+                 "type": "X-Ray Machine",
+                 "uuid": "ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+                 "vendor": "Philips",
+                 "version": "Allura Xper, 8.1.17.2",
+                 "vlan": 477
+            }
+
         """
         return self.client._make_request(
             "GET", "/inventory/device", params={"mac_address": device_id}
@@ -349,7 +372,38 @@ class Network:
             page_size: Controls number of results in each response. Max 100.
 
         Returns:
-            List of subnet objects
+            List of subnet objects similar to this:
+            "subnets": [
+               {
+                  "subnet": "10.40.0.0",
+                  "vlan": 477,
+                  "description": "Main Building - Floor 4",
+                  "mask_len": 16,
+                  "subnet_inet": "10.40.0.0/16",
+                  "total_devices": 865,
+                  "device_breakdown": [
+                    {
+                      "class": "Infrastructure",
+                      "count": 160
+                    },
+                    {
+                      "class": "Medical",
+                      "count": 380
+                    },
+                    {
+                      "class": "Misc IoT",
+                      "count": 240
+                    },
+                    {
+                      "class": "Non-IoT",
+                      "count": 85
+                    }
+                  ]
+                }
+              ],
+              "total": 1,
+              "page": 0
+            }
         """
         params = {
             "cidr_range": cidr_range,
