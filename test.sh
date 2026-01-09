@@ -12,3 +12,9 @@ echo "******** Running ruff check (linter)  **********"
 uvx ruff check || exit 1
 echo "******** Running pyright (checking types) **********"
 uvx pyright . || exit 1
+echo "******** Running shellcheck (linter) ********"
+shellcheck test_docker_container.sh
+echo "******** Running bandit (security) *********"
+uvx bandit -c bandit.yaml *.py
+echo "******** Running pip-audit (security scanning packages) *******"
+uvx pip-audit

@@ -13,12 +13,11 @@ follows:
 All tests must be run to ensure it still works - see the "Testing and development"
 section below.
 
-# Code quality and test_cylera_client
+# Code quality 
 
 For the Python code, [Ruff](https://github.com/astral-sh/ruff) is used:
 
     uvx ruff check   # Lint all files in the current directory.
-    uvx ruff format  # Format all files in the current directory.
 
 For checking types in the Python code, [pyright](https://github.com/microsoft/pyright) is used:
 
@@ -28,6 +27,18 @@ For the shell scripts, [shellcheck](https://github.com/koalaman/shellcheck) is
 used:
 
     shellcheck *.sh
+
+# Security scanning
+
+For the Python code, [Bandit](https://github.com/astral-sh/ruff) is used:
+
+    uvx bandit -c bandit.yaml *.py
+
+# Formatting
+
+For the Python code, [Ruff](https://github.com/astral-sh/ruff) is used:
+
+    uvx ruff format  # Format all files in the current directory.
 
 # Testing and development
 

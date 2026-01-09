@@ -1,0 +1,2 @@
+# FILE: bandit.yaml
+exclude_dirs: ['test_cylera_client.py', 'test_mcp_server.py']
