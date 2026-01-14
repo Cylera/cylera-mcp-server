@@ -39,9 +39,8 @@ risk = Risk(client)
 network = Network(client)
 
 
-def format_device(device_data):
+def format_device(device):
     """Format device data into a readable string for MCP tool"""
-    device = device_data.get("device", {})
 
     return f"""Device Information:
 - AE title: {device.get("aetitle", "Unknown")}
@@ -162,14 +161,16 @@ def format_devices(devices_data) -> str:
 @mcp.tool()
 def get_device(mac_address: str) -> str:
     """Get details about a device by MAC address"""
-    device = inventory.get_device(mac_address)
+    device_data = inventory.get_device(mac_address)
+    device = device_data.get("device", {})
     return format_device(device)
 
 
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(
+        params={"device_uuid": device_uuid})
     return format_procedures(procedures)
 
 
