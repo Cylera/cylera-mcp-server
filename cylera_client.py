@@ -249,7 +249,7 @@ class Inventory:
         last_seen_before: Optional[int] = None,
         last_seen_after: Optional[int] = None,
         attribute_label: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
         Get a list of devices.
 
@@ -279,7 +279,36 @@ class Inventory:
             attribute_label: Partial or complete attribute label
 
         Returns:
-            List of device objects
+            List of devices similar to this
+            {
+              "devices": [
+                {
+                  "aetitle": null,
+                  "class": "Infrastructure",
+                  "fda_class": null,
+                  "first_seen": 1635057696.0,
+                  "hostname": "PMLETVCUTA",
+                  "id": "67c470a6-4c28-11ec-8a38-5eeeaabea551",
+                  "ip_address": "10.50.170.146",
+                  "last_seen": 1768397443.0,
+                  "location": "Location 1",
+                  "mac_address": "00:c8:58:bd:2c:66",
+                  "model": "Panasonic IP Camera",
+                  "os": "Windows",
+                  "outdated": null,
+                  "risk": 1,
+                  "serial_number": null,
+                  "type": "Surveillance Camera",
+                  "uuid": "67c470a6-4c28-11ec-8a38-5eeeaabea551",
+                  "vendor": "Panasonic",
+                  "version": null,
+                  "vlan": 889
+                }
+              ],
+              "total": null,
+              "page": 1
+            }
+
         """
         params = {
             "aetitle": aetitle,

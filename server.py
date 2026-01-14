@@ -150,6 +150,15 @@ def format_vulnerabilities(vulnerabilities_data) -> str:
     return formatted_vulnerabilities
 
 
+def format_devices(devices_data) -> str:
+    """Format devices into a readable string for MCP tool"""
+    devices = devices_data.get("devices", [])
+    formatted_devices = "Ask for the next page to see more:\n"
+    for device in devices:
+        formatted_devices += format_device(device)
+    return formatted_devices
+
+
 @mcp.tool()
 def get_device(mac_address: str) -> str:
     """Get details about a device by MAC address"""
@@ -252,8 +261,8 @@ def search_for_devices(
     mac_address: Optional[str] = None,
     model: Optional[str] = None,
     os: Optional[str] = None,
-    page: Optional[int] = None,
-    page_size: Optional[int] = None,
+    page: int = 1,
+    page_size: int = 20,
     serial_number: Optional[str] = None,
     since_last_seen: Optional[int] = None,
     device_type: Optional[str] = None,
@@ -262,7 +271,7 @@ def search_for_devices(
     first_seen_after: Optional[int] = None,
     last_seen_before: Optional[int] = None,
     last_seen_after: Optional[int] = None,
-) -> list[dict]:
+) -> dict:
     """
     Search for devices that match the provided search criteria
     Args:
@@ -285,7 +294,7 @@ def search_for_devices(
         last_seen_after: Finds devices that were last seen after this epoch timestamp
     """
 
-    search_results = inventory.get_devices(
+    devices = inventory.get_devices(
         aetitle=aetitle,
         device_class=device_class,
         hostname=hostname,
@@ -304,7 +313,17 @@ def search_for_devices(
         last_seen_before=last_seen_before,
         last_seen_after=last_seen_after,
     )
-    return search_results
+    count = len(devices.get("devices", []))
+    has_more = count >= page_size
+    return {
+        "data": format_devices(devices),
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "has_more": has_more,
+            "next_page": page + 1,
+        },
+    }
 
 
 if __name__ == "__main__":

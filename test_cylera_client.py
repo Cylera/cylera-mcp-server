@@ -90,13 +90,54 @@ class TestGetDevices(unittest.TestCase):
         )
         inventory = Inventory(client)
 
-        # Call the method with some test parameters
-        result = inventory.get_devices(
-            model="Panasonic IP Camera", page=1, page_size=50
+        # Get first page
+        result1 = inventory.get_devices(
+            model="Panasonic IP Camera", page=1, page_size=2
         )
+        log(json.dumps(result1, indent=2))
+        self.assertIn("devices", result1)
+        devices_page1 = result1["devices"]
 
-        log(json.dumps(result, indent=2))
-        self.assertIn("devices", result)
+        # Verify page 1 contains exactly 2 items
+        self.assertEqual(len(devices_page1), 2, "Page 1 should contain exactly 2 items")
+
+        # Verify all items on page 1 have a model of "Panasonic IP Camera"
+        for device in devices_page1:
+            self.assertEqual(
+                device["model"],
+                "Panasonic IP Camera",
+                f"Device {
+                    device.get('model', 'unknown')
+                } should be a Panasonic IP Camera",
+            )
+
+        # Get second page
+        result2 = inventory.get_devices(
+            model="Panasonic IP Camera", page=2, page_size=2
+        )
+        log(json.dumps(result2, indent=2))
+        self.assertIn("devices", result2)
+        devices_page2 = result2["devices"]
+
+        # Verify all items on page 2 have a model of "Panasonic IP Camera"
+        for device in devices_page2:
+            self.assertEqual(
+                device["model"],
+                "Panasonic IP Camera",
+                f"Device {
+                    device.get('model', 'unknown')
+                } should be a Panasonic IP Camera",
+            )
+
+        # Verify no duplicate records between pages (using uuid as unique identifier)
+        uuids_page1 = {device["uuid"] for device in devices_page1}
+        uuids_page2 = {device["uuid"] for device in devices_page2}
+        duplicates = uuids_page1.intersection(uuids_page2)
+        self.assertEqual(
+            len(duplicates),
+            0,
+            f"Found duplicate device UUIDs between pages: {duplicates}",
+        )
 
 
 class TestGetSubnets(unittest.TestCase):
@@ -135,8 +176,7 @@ class TestGetVulnerabilities(unittest.TestCase):
         risk = Risk(client)
 
         # Get first page
-        result1 = risk.get_vulnerabilities(
-            page=1, page_size=2, severity="CRITICAL")
+        result1 = risk.get_vulnerabilities(page=1, page_size=2, severity="CRITICAL")
         log(json.dumps(result1, indent=2))
         self.assertIn("vulnerabilities", result1)
         vulnerabilities_page1 = result1["vulnerabilities"]
@@ -152,12 +192,12 @@ class TestGetVulnerabilities(unittest.TestCase):
                 vuln["severity"],
                 "Critical",
                 f"Vulnerability {
-                    vuln.get('name', 'unknown')} should have Critical severity",
+                    vuln.get('name', 'unknown')
+                } should have Critical severity",
             )
 
         # Get second page
-        result2 = risk.get_vulnerabilities(
-            page=2, page_size=2, severity="CRITICAL")
+        result2 = risk.get_vulnerabilities(page=2, page_size=2, severity="CRITICAL")
         log(json.dumps(result2, indent=2))
         self.assertIn("vulnerabilities", result2)
         vulnerabilities_page2 = result2["vulnerabilities"]
@@ -173,7 +213,8 @@ class TestGetVulnerabilities(unittest.TestCase):
                 vuln["severity"],
                 "Critical",
                 f"Vulnerability {
-                    vuln.get('name', 'unknown')} should have Critical severity",
+                    vuln.get('name', 'unknown')
+                } should have Critical severity",
             )
 
         # Verify no duplicate records between pages (using uuid as unique identifier)
