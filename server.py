@@ -167,10 +167,34 @@ def get_device(mac_address: str) -> str:
 
 
 @mcp.tool()
-def get_procedures(device_uuid: str) -> list[dict]:
-    """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(device_uuid=device_uuid)
-    return format_procedures(procedures)
+def get_procedures(device_uuid: str, page: int = 1, page_size: int = 20) -> dict:
+    """
+    Returns a paginated list of procedures for the device that show how
+    and when the the device has been utilized. The response includes:
+    - data: list of procedures for the current page
+    - pagination: metadata about pagination
+        - page: current page number
+        - page_size: number of items per page
+        - total_count: total number of procedures
+        - has_more: true if additional pages exist
+        - next_page: next page number if more pages exist
+
+        If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+    """
+    procedures = utilization.get_procedures(
+        device_uuid=device_uuid, page=page, page_size=page_size
+    )
+    count = len(procedures.get("procedures", []))
+    has_more = count >= page_size
+    return {
+        "data": format_procedures(procedures),
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "has_more": has_more,
+            "next_page": page + 1,
+        },
+    }
 
 
 @mcp.tool()
