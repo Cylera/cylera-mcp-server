@@ -308,7 +308,6 @@ class Inventory:
               "total": null,
               "page": 1
             }
-
         """
         params = {
             "aetitle": aetitle,
@@ -379,7 +378,21 @@ class Utilization:
             page_size: Controls number of results in each response. Max 100.
 
         Returns:
-            Dict containing procedure objects and pagination info
+            List of procedure similar to this
+            {
+              "procedures": [
+                {
+                  "device_uuid": "ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+                  "accession_number": "BNPVTYOPAZYRJOSGLBMJMGBDFJMMJBYEUQT",
+                  "image_count": 8,
+                  "start": "2025-12-25T05:17:36",
+                  "end": "2025-12-25T17:01:17",
+                  "procedure_name": "IR CHEST PORT PLACEMENT 5+ YEARS"
+                }
+              ],
+              "total": 452,
+              "page": 1
+            }
         """
         params = {
             "procedure_name": procedure_name,

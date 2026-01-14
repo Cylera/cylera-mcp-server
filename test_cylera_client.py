@@ -59,17 +59,67 @@ class TestGetProcedures(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         utilization = Utilization(client)
-        result = utilization.get_procedures(
-            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551"
+
+        # Get first page
+        result1 = utilization.get_procedures(
+            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=1, page_size=2
         )
-        log(json.dumps(result, indent=2))
-        self.assertIn("procedures", result)
+        log(json.dumps(result1, indent=2))
+        self.assertIn("procedures", result1)
+        procedures_page1 = result1["procedures"]
+
+        # Verify page 1 contains exactly 2 items
+        self.assertEqual(
+            len(procedures_page1), 2, "Page 1 should contain exactly 2 items"
+        )
+
+        # Verify all procedures are for the same device
+        for procedure in procedures_page1:
+            self.assertEqual(
+                procedure["device_uuid"],
+                "ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+                f"Procedure {
+                    procedure.get('device_uuid', 'unknown')
+                } should be ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+            )
+
+        # Get second page
+        result2 = utilization.get_procedures(
+            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=2, page_size=2
+        )
+        log(json.dumps(result2, indent=2))
+        self.assertIn("procedures", result2)
+        procedures_page2 = result2["procedures"]
+
+        # Verify page 1 contains exactly 2 items
+        self.assertEqual(
+            len(procedures_page2), 2, "Page 1 should contain exactly 2 items"
+        )
+
+        # Verify all procedures are for the same device
+        for procedure in procedures_page2:
+            self.assertEqual(
+                procedure["device_uuid"],
+                "ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+                f"Procedure {
+                    procedure.get('device_uuid', 'unknown')
+                } should be ffc20dfe-4c24-11ec-8a38-5eeeaabea551",
+            )
+
+        # Verify no duplicate records between pages (using start)
+        start_page1 = {procedure["start"] for procedure in procedures_page1}
+        start_page2 = {procedure["start"] for procedure in procedures_page2}
+        duplicates = start_page1.intersection(start_page2)
+        self.assertEqual(
+            len(duplicates),
+            0,
+            f"Found duplicate procedure between pages: {duplicates}",
+        )
 
 
 class TestGetDeviceAttributes(unittest.TestCase):
     def test_get_device_attributes(self):
         mac_address = "7f:14:22:72:00:e5"
-
         client = CyleraClient(
             username=get_env_var("TEST_CYLERA_USERNAME"),
             password=get_env_var("TEST_CYLERA_PASSWORD"),
@@ -130,7 +180,7 @@ class TestGetDevices(unittest.TestCase):
                 } should be a Panasonic IP Camera",
             )
 
-        # Verify no duplicate records between pages (using uuid as unique identifier)
+        # Verify no duplicate records between pages (using uuid)
         uuids_page1 = {device["uuid"] for device in devices_page1}
         uuids_page2 = {device["uuid"] for device in devices_page2}
         duplicates = uuids_page1.intersection(uuids_page2)
@@ -204,9 +254,7 @@ class TestGetVulnerabilities(unittest.TestCase):
         vulnerabilities_page2 = result2["vulnerabilities"]
 
         # Verify page 2 contains exactly 2 items
-        self.assertEqual(
-            len(vulnerabilities_page2), 2, "Page 2 should contain exactly 2 items"
-        )
+        self.assertEqual(len(vulnerabilities_page2), 2, "Page 2 should contain 2 items")
 
         # Verify all items on page 2 have CRITICAL severity
         for vuln in vulnerabilities_page2:
@@ -218,7 +266,7 @@ class TestGetVulnerabilities(unittest.TestCase):
                 } should have Critical severity",
             )
 
-        # Verify no duplicate records between pages (using uuid as unique identifier)
+        # Verify no duplicate records between pages (using uuid)
         uuids_page1 = {vuln["uuid"] for vuln in vulnerabilities_page1}
         uuids_page2 = {vuln["uuid"] for vuln in vulnerabilities_page2}
         duplicates = uuids_page1.intersection(uuids_page2)
