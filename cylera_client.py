@@ -359,23 +359,38 @@ class Utilization:
         self.client = client
 
     def get_procedures(
-        self, params: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+        self,
+        procedure_name: Optional[str] = None,
+        accession_number: Optional[str] = None,
+        device_uuid: Optional[str] = None,
+        completed_after: Optional[str] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> Dict[str, Any]:
         """
         Get a list of procedures.
 
         Args:
-            params: Optional query parameters for filtering procedures.
-                - procedure_name: Name of Procedure (will match partial)
-                - accession_number: Accession Number of Procedure
-                - device_uuid: Device UUID
-                - completed_after: Completion Date (format: YYYY/MM/DD)
-                - page: Which page of results to return (int)
-                - page_size: Number of results per page (int, max 100)
+            procedure_name: Name of Procedure (will match partial)
+            accession_number: Accession Number of Procedure
+            device_uuid: Device UUID
+            completed_after: Completion Date (format: YYYY/MM/DD)
+            page: Controls which page of results to return
+            page_size: Controls number of results in each response. Max 100.
 
         Returns:
-            List of procedure objects
+            Dict containing procedure objects and pagination info
         """
+        params = {
+            "procedure_name": procedure_name,
+            "accession_number": accession_number,
+            "device_uuid": device_uuid,
+            "completed_after": completed_after,
+            "page": page,
+            "page_size": page_size,
+        }
+        # remove None values
+        params = {k: v for k, v in params.items() if v is not None}
         return self.client._make_request(
             "GET", "/utilization/procedures", params=params
         )

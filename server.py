@@ -169,8 +169,7 @@ def get_device(mac_address: str) -> str:
 @mcp.tool()
 def get_procedures(device_uuid: str) -> list[dict]:
     """Provide details about how the device has been utilized recently by providing details of the procedures performe"""
-    procedures = utilization.get_procedures(
-        params={"device_uuid": device_uuid})
+    procedures = utilization.get_procedures(device_uuid=device_uuid)
     return format_procedures(procedures)
 
 

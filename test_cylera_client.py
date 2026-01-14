@@ -59,8 +59,9 @@ class TestGetProcedures(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         utilization = Utilization(client)
-        params = {"device_uuid": "ffc20dfe-4c24-11ec-8a38-5eeeaabea551"}
-        result = utilization.get_procedures(params=params)
+        result = utilization.get_procedures(
+            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551"
+        )
         log(json.dumps(result, indent=2))
         self.assertIn("procedures", result)
 
