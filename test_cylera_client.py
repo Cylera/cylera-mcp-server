@@ -133,9 +133,58 @@ class TestGetVulnerabilities(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         risk = Risk(client)
-        result = risk.get_vulnerabilities(severity="CRITICAL")
-        log(json.dumps(result, indent=2))
-        self.assertIn("vulnerabilities", result)
+
+        # Get first page
+        result1 = risk.get_vulnerabilities(
+            page=1, page_size=2, severity="CRITICAL")
+        log(json.dumps(result1, indent=2))
+        self.assertIn("vulnerabilities", result1)
+        vulnerabilities_page1 = result1["vulnerabilities"]
+
+        # Verify page 1 contains exactly 2 items
+        self.assertEqual(
+            len(vulnerabilities_page1), 2, "Page 1 should contain exactly 2 items"
+        )
+
+        # Verify all items on page 1 have CRITICAL severity
+        for vuln in vulnerabilities_page1:
+            self.assertEqual(
+                vuln["severity"],
+                "Critical",
+                f"Vulnerability {
+                    vuln.get('name', 'unknown')} should have Critical severity",
+            )
+
+        # Get second page
+        result2 = risk.get_vulnerabilities(
+            page=2, page_size=2, severity="CRITICAL")
+        log(json.dumps(result2, indent=2))
+        self.assertIn("vulnerabilities", result2)
+        vulnerabilities_page2 = result2["vulnerabilities"]
+
+        # Verify page 2 contains exactly 2 items
+        self.assertEqual(
+            len(vulnerabilities_page2), 2, "Page 2 should contain exactly 2 items"
+        )
+
+        # Verify all items on page 2 have CRITICAL severity
+        for vuln in vulnerabilities_page2:
+            self.assertEqual(
+                vuln["severity"],
+                "Critical",
+                f"Vulnerability {
+                    vuln.get('name', 'unknown')} should have Critical severity",
+            )
+
+        # Verify no duplicate records between pages (using uuid as unique identifier)
+        uuids_page1 = {vuln["uuid"] for vuln in vulnerabilities_page1}
+        uuids_page2 = {vuln["uuid"] for vuln in vulnerabilities_page2}
+        duplicates = uuids_page1.intersection(uuids_page2)
+        self.assertEqual(
+            len(duplicates),
+            0,
+            f"Found duplicate vulnerability UUIDs between pages: {duplicates}",
+        )
 
 
 if __name__ == "__main__":
