@@ -279,7 +279,7 @@ class Inventory:
             attribute_label: Partial or complete attribute label
 
         Returns:
-            List of devices similar to this
+            List of devices similar to this:
             {
               "devices": [
                 {
@@ -378,7 +378,7 @@ class Utilization:
             page_size: Controls number of results in each response. Max 100.
 
         Returns:
-            List of procedure similar to this
+            List of procedures similar to this:
             {
               "procedures": [
                 {
@@ -425,7 +425,7 @@ class Network:
         vlan: Optional[int] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
         Get a list of subnets.
 
@@ -437,9 +437,10 @@ class Network:
             page_size: Controls number of results in each response. Max 100.
 
         Returns:
-            List of subnet objects similar to this:
-            "subnets": [
-               {
+            List of subnets similar to this:
+            {
+              "subnets": [
+                {
                   "subnet": "10.40.0.0",
                   "vlan": 477,
                   "description": "Main Building - Floor 4",
@@ -534,7 +535,30 @@ class Risk:
                     Enum: "OPEN", "IN_PROGRESS", "RESOLVED", "SUPPRESSED"
 
         Returns:
-            List of vulnerability objects
+            List of vulnerabilities similar to this:
+            {
+              "vulnerabilities": [
+                {
+                  "uuid": "1fd9204a-4c26-11ec-8a38-5eeeaabea551",
+                  "ip_address": "10.20.233.235",
+                  "mac_address": "65:cc:15:5c:46:f0",
+                  "model": null,
+                  "type": null,
+                  "vendor": null,
+                  "class": "Medical",
+                  "vulnerability_name": "Ripple20 (ICSA-20-168-01)",
+                  "vulnerability_category": "Security",
+                  "first_seen": 1637648717,
+                  "last_seen": 1637648717,
+                  "severity": "Critical",
+                  "status": "In Progress",
+                  "confidence": "High"
+                }
+              ],
+              "total": null,
+              "page": 1
+            }
+
         """
         params = {
             "confidence": confidence,
