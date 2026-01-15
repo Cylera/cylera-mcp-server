@@ -200,7 +200,7 @@ class TestGetSubnets(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         network = Network(client)
-        result = network.get_subnets(vlan=477, page=0, page_size=1)
+        result = network.get_subnets(vlan=477)
         log(json.dumps(result, indent=2))
 
         # The get_subnets API does support pagination but, it
