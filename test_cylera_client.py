@@ -200,12 +200,13 @@ class TestGetSubnets(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         network = Network(client)
-        result = network.get_subnets(vlan=477)
+        result = network.get_subnets(page=0, page_size=1)
         log(json.dumps(result, indent=2))
 
-        # The get_subnets API does support pagination but, it
-        # only really give highlevel device counts by class
-        # so pagination looks a little un-necessary
+        # The get_subnets API does appear to support pagination
+        # but, it doesn't seem to work and provides the entire
+        # data set in the first page. page_size appears to be
+        # ignored. This is probably ok if a little weird.
         self.assertIn("subnets", result)
 
 
