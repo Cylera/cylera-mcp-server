@@ -62,7 +62,7 @@ class TestGetProcedures(unittest.TestCase):
 
         # Get first page
         result1 = utilization.get_procedures(
-            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=1, page_size=2
+            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=0, page_size=2
         )
         log(json.dumps(result1, indent=2))
         self.assertIn("procedures", result1)
@@ -85,7 +85,7 @@ class TestGetProcedures(unittest.TestCase):
 
         # Get second page
         result2 = utilization.get_procedures(
-            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=2, page_size=2
+            device_uuid="ffc20dfe-4c24-11ec-8a38-5eeeaabea551", page=1, page_size=2
         )
         log(json.dumps(result2, indent=2))
         self.assertIn("procedures", result2)
@@ -143,14 +143,15 @@ class TestGetDevices(unittest.TestCase):
 
         # Get first page
         result1 = inventory.get_devices(
-            model="Panasonic IP Camera", page=1, page_size=2
+            model="Panasonic IP Camera", page=0, page_size=2
         )
         log(json.dumps(result1, indent=2))
         self.assertIn("devices", result1)
         devices_page1 = result1["devices"]
 
         # Verify page 1 contains exactly 2 items
-        self.assertEqual(len(devices_page1), 2, "Page 1 should contain exactly 2 items")
+        self.assertEqual(len(devices_page1), 2,
+                         "Page 1 should contain exactly 2 items")
 
         # Verify all items on page 1 have a model of "Panasonic IP Camera"
         for device in devices_page1:
@@ -164,7 +165,7 @@ class TestGetDevices(unittest.TestCase):
 
         # Get second page
         result2 = inventory.get_devices(
-            model="Panasonic IP Camera", page=2, page_size=2
+            model="Panasonic IP Camera", page=1, page_size=2
         )
         log(json.dumps(result2, indent=2))
         self.assertIn("devices", result2)
@@ -199,8 +200,12 @@ class TestGetSubnets(unittest.TestCase):
             base_url=get_env_var("TEST_CYLERA_BASE_URL"),
         )
         network = Network(client)
-        result = network.get_subnets(vlan=477, page=0)
+        result = network.get_subnets(vlan=477, page=0, page_size=1)
         log(json.dumps(result, indent=2))
+
+        # The get_subnets API does support pagination but, it
+        # only really give highlevel device counts by class
+        # so pagination looks a little un-necessary
         self.assertIn("subnets", result)
 
 
@@ -227,7 +232,8 @@ class TestGetVulnerabilities(unittest.TestCase):
         risk = Risk(client)
 
         # Get first page
-        result1 = risk.get_vulnerabilities(page=1, page_size=2, severity="CRITICAL")
+        result1 = risk.get_vulnerabilities(
+            page=0, page_size=2, severity="CRITICAL")
         log(json.dumps(result1, indent=2))
         self.assertIn("vulnerabilities", result1)
         vulnerabilities_page1 = result1["vulnerabilities"]
@@ -248,13 +254,15 @@ class TestGetVulnerabilities(unittest.TestCase):
             )
 
         # Get second page
-        result2 = risk.get_vulnerabilities(page=2, page_size=2, severity="CRITICAL")
+        result2 = risk.get_vulnerabilities(
+            page=1, page_size=2, severity="CRITICAL")
         log(json.dumps(result2, indent=2))
         self.assertIn("vulnerabilities", result2)
         vulnerabilities_page2 = result2["vulnerabilities"]
 
         # Verify page 2 contains exactly 2 items
-        self.assertEqual(len(vulnerabilities_page2), 2, "Page 2 should contain 2 items")
+        self.assertEqual(len(vulnerabilities_page2), 2,
+                         "Page 2 should contain 2 items")
 
         # Verify all items on page 2 have CRITICAL severity
         for vuln in vulnerabilities_page2:

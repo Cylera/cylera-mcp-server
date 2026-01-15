@@ -167,7 +167,7 @@ def get_device(mac_address: str) -> str:
 
 
 @mcp.tool()
-def get_procedures(device_uuid: str, page: int = 1, page_size: int = 20) -> dict:
+def get_procedures(device_uuid: str, page: int = 0, page_size: int = 20) -> dict:
     """
     Returns a paginated list of procedures for the device that show how
     and when the the device has been utilized. The response includes:
@@ -216,16 +216,12 @@ def get_subnets(
     cidr_range: Optional[str] = None,
     description: Optional[str] = None,
     vlan: Optional[int] = None,
-    page: Optional[int] = None,
-    page_size: Optional[int] = None,
 ) -> str:
     """Get a list of subnets."""
     subnets = network.get_subnets(
         cidr_range=cidr_range,
         description=description,
         vlan=vlan,
-        page=page,
-        page_size=page_size,
     )
     return format_subnets(subnets)
 
@@ -236,7 +232,7 @@ def get_vulnerabilities(
     detected_after: Optional[int] = None,
     mac_address: Optional[str] = None,
     name: Optional[str] = None,
-    page: int = 1,
+    page: int = 0,
     page_size: int = 20,
     severity: Optional[Literal["CRITICAL", "HIGH", "MEDIUM", "LOW"]] = None,
     status: Optional[str] = None,
@@ -285,7 +281,7 @@ def search_for_devices(
     mac_address: Optional[str] = None,
     model: Optional[str] = None,
     os: Optional[str] = None,
-    page: int = 1,
+    page: int = 0,
     page_size: int = 20,
     serial_number: Optional[str] = None,
     since_last_seen: Optional[int] = None,
