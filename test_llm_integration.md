@@ -48,6 +48,16 @@ Please run the following tests for the MCP server tools and provide a summary at
 - Tool call succeeds
 - Returns subnet data with CIDR ranges if available
 
+## Test 6: Threats Query
+**Objective**: Verify get_threats tool with pagination
+**Action**: Get all Medium threats with a page size of 3
+**Expected Result:** Should return paginated threats list
+**Validation Criteria:**
+- Tool call succeeds
+- Pagination metadata is present
+- Only Medium threats are returned
+
+
 ---
 
 ## Test Execution Instructions:

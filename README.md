@@ -358,7 +358,7 @@ And it will respond with something like this:
     the specific IP address range or gateway configuration, you may need to access 
     the full Cylera interface directly or contact your network administrator.
 
-### Example 8: vulnerabilities
+### Example 8: Vulnerabilities
 
 Prompt:
 
@@ -400,6 +400,51 @@ And it will respond with something like this:
     
     This appears to be a significant security incident requiring immediate
     attention, especially given the medical device classification.
+
+### Example 9: Threats
+
+Prompt:
+
+    Using Cylera, get all Medium threats with a page size of 3
+
+And it will respond with something like this:
+
+    I'll retrieve the medium severity threats from Cylera with a page size of 3.
+
+    Successfully retrieved medium severity threats from Cylera. Here are the results:
+    Medium Severity Threats (Page 1 of multiple)
+    Threat 1:
+    
+    Device: LifeCare PCA (MAC: ef:ce:c8:24:3e:ea)
+    IP Address: 10.30.226.195
+    Threat: Anomalous network communication behavior
+    Category: GENERAL
+    Status: Accepted
+    First Seen: Nov 22, 2021
+    Last Seen: Nov 23, 2021
+    
+    Threat 2:
+    
+    Device: Philips Achieva dStream MRI (MAC: bb:b0:71:cf:30:0a)
+    IP Address: 10.30.150.250
+    Threat: Anomalous network communication behavior
+    Category: GENERAL
+    Status: Open
+    First Seen: Nov 22, 2021
+    Last Seen: Nov 23, 2021
+    
+    Threat 3:
+    
+    Device: DRX Revolution (MAC: b2:37:6f:b6:73:09)
+    IP Address: 10.30.28.249
+    Threat: Unusual port 139 traffic
+    Category: NETWORK
+    Status: Open
+    First Seen: Nov 22, 2021
+    Last Seen: Nov 23, 2021
+
+    Pagination: More medium severity threats are available (has_more: true). Would you like me to retrieve the next page?
+    
 
 ## Installation - the easy button
 
@@ -510,6 +555,7 @@ The following API endpoints are currently integrated into the MCP server.
 | **GET** | `/network/subnets` | Get subnets - Returns subnet information with optional filtering by CIDR range, description, and VLAN. |
 | **GET** | `/risk/mitigations` | Get mitigations - Returns mitigation information for a specific vulnerability. |
 | **GET** | `/risk/vulnerabilities` | Get vulnerabilities - Returns vulnerability information with optional filtering by confidence, detection time, MAC address, name, severity, and status. |
+| **GET** | `/threat/threats` | Get threats - Returns threat information with optional filtering by detection time, MAC address, name, severity, and status. |
 
 The full power of the Cylera Partner API is not yet fully exposed and will be developed over time.
 
@@ -519,6 +565,5 @@ The full power of the Cylera Partner API is not yet fully exposed and will be de
 | **POST** | `/inventory/device_attributes` | Create an attribute for a device - This endpoint creates a new label-value attribute for a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the attribute won't be created. Note that you can only create attributes for non-reserved (aka non-Cylera) keys. |
 | **POST** | `/risk/vulnerability` | Update vulnerability - Updates the status of a specific vulnerability using its UUID. |
 | **POST** | `/threat/threat` | Update threat - Updates the status of a specific threat using its UUID. |
-| **GET** | `/threat/threats` | Get threats - Returns threat information with optional filtering by detection time, MAC address, name, severity, and status. |
 
 [tutorial]: tutorial.webp
