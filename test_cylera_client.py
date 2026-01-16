@@ -9,7 +9,7 @@ import os
 import unittest
 import json
 import sys
-from cylera_client import CyleraClient, Inventory, Utilization, Network, Risk
+from cylera_client import CyleraClient, Inventory, Utilization, Network, Risk, Threat
 
 # Check if verbose flag is present
 VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
@@ -278,6 +278,64 @@ class TestGetVulnerabilities(unittest.TestCase):
         # Verify no duplicate records between pages (using uuid)
         uuids_page1 = {vuln["uuid"] for vuln in vulnerabilities_page1}
         uuids_page2 = {vuln["uuid"] for vuln in vulnerabilities_page2}
+        duplicates = uuids_page1.intersection(uuids_page2)
+        self.assertEqual(
+            len(duplicates),
+            0,
+            f"Found duplicate vulnerability UUIDs between pages: {duplicates}",
+        )
+
+
+class TestThreats(unittest.TestCase):
+    def test_get_threats(self):
+        client = CyleraClient(
+            username=get_env_var("TEST_CYLERA_USERNAME"),
+            password=get_env_var("TEST_CYLERA_PASSWORD"),
+            base_url=get_env_var("TEST_CYLERA_BASE_URL"),
+        )
+        threat = Threat(client)
+
+        # Get first page
+        result1 = threat.get_threats(page=0, page_size=2, severity="MEDIUM")
+        log(json.dumps(result1, indent=2))
+        self.assertIn("threats", result1)
+        self.assertEqual(result1["total"], 16, "Expected 16 Medium threats")
+        threats_page1 = result1["threats"]
+
+        # Verify page 1 contains exactly 2 items
+        self.assertEqual(len(threats_page1), 2,
+                         "Page 1 should contain exactly 2 items")
+
+        # Verify all items on page 1 have Medium severity
+        for t in threats_page1:
+            self.assertEqual(
+                t["severity"],
+                "Medium",
+                f"Threat {t.get('name', 'unknown')
+                          } should have Medium severity",
+            )
+
+        # Get second page
+        result2 = threat.get_threats(page=1, page_size=2, severity="MEDIUM")
+        log(json.dumps(result2, indent=2))
+        threats_page2 = result2["threats"]
+
+        # Verify page 2 contains exactly 2 items
+        self.assertEqual(len(threats_page2), 2,
+                         "Page 2 should contain exactly 2 items")
+
+        # Verify all items on page 2 have Medium severity
+        for t in threats_page2:
+            self.assertEqual(
+                t["severity"],
+                "Medium",
+                f"Threat {t.get('name', 'unknown')
+                          } should have Medium severity",
+            )
+        #
+        # Verify no duplicate records between pages (using uuid)
+        uuids_page1 = {t["uuid"] for t in threats_page1}
+        uuids_page2 = {t["uuid"] for t in threats_page2}
         duplicates = uuids_page1.intersection(uuids_page2)
         self.assertEqual(
             len(duplicates),

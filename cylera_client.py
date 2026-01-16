@@ -109,7 +109,8 @@ class CyleraClient:
             data = response.json()
 
             if "token" not in data:
-                raise CyleraAuthError("No token received in authentication response")
+                raise CyleraAuthError(
+                    "No token received in authentication response")
 
             self._store_token(data["token"])
 
@@ -573,3 +574,73 @@ class Risk:
         # remove None values
         params = {k: v for k, v in params.items() if v is not None}
         return self.client._make_request("GET", "/risk/vulnerabilities", params=params)
+
+
+class Threat:
+    """
+    Helper class for threat-related endpoints using composition with
+    CyleraClient.
+    """
+
+    def __init__(self, client: CyleraClient):
+        self.client = client
+
+    def get_threats(
+        self,
+        detected_after: Optional[int] = None,
+        mac_address: Optional[str] = None,
+        name: Optional[str] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+        severity: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Get a list of threats.
+
+        Args:
+            detected_after: Epoch timestamp after which a threat was detected.
+            mac_address: MAC address of device.
+            name: Name of the threat (complete or partial).
+            page: Controls which page of results to return.
+            page_size: Controls number of results in each response. Max 100.
+            severity: Threat severity.
+                      Enum: "INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"
+            status: Threat status.
+                    Enum: "OPEN", "IN_PROGRESS", "RESOLVED", "SUPPRESSED"
+
+        Returns:
+            List of threats similar to this:
+            {
+              "threats": [
+                {
+                  "uuid": "9b2bd1ea-4c24-11ec-8a38-5eeeaabea551",
+                  "ip_address": "10.30.150.250",
+                  "mac_address": "bb:b0:71:cf:30:0a",
+                  "hostname": "MOGJBMHEAG",
+                  "device_identifier": "Philips Achieva dStream MRI",
+                  "description": null,
+                  "threat": "Anomalous network communication behavior",
+                  "category": "GENERAL",
+                  "first_seen": 1637579837,
+                  "last_seen": 1637648064,
+                  "severity": "Medium",
+                  "status": "Open"
+                }
+              ],
+              "total": 23,
+              "page": 0
+            }
+        """
+        params = {
+            "detected_after": detected_after,
+            "mac_address": mac_address,
+            "name": name,
+            "page": page,
+            "page_size": page_size,
+            "severity": severity,
+            "status": status,
+        }
+        # remove None values
+        params = {k: v for k, v in params.items() if v is not None}
+        return self.client._make_request("GET", "/threat/threats", params=params)
