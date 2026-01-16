@@ -2,7 +2,7 @@
 from sys import stderr
 from fastmcp import FastMCP
 from typing import Optional, Literal
-from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network
+from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network, Threat
 from dotenv import load_dotenv
 import os
 
@@ -37,6 +37,7 @@ inventory = Inventory(client)
 utilization = Utilization(client)
 risk = Risk(client)
 network = Network(client)
+threat = Threat(client)
 
 
 def format_device(device):
@@ -156,6 +157,29 @@ def format_devices(devices_data) -> str:
     for device in devices:
         formatted_devices += format_device(device)
     return formatted_devices
+
+
+def format_threats(threats_data) -> str:
+    """Format threats into a readable string for MCP tool"""
+    threats = threats_data.get("threats", [])
+    formatted_threats = (
+        "Threats Information first page. Ask for the next page to see more:\n"
+    )
+    for t in threats:
+        formatted_threats += f"""
+        - ip_address: {t.get("ip_address", "Unknown")}
+        - mac_address: {t.get("mac_address", "Unknown")}
+        - hostname: {t.get("hostname", "Unknown")}
+        - device_identifier: {t.get("device_identifier", "Unknown")}
+        - description: {t.get("description", "Unknown")}
+        - threat: {t.get("threat", "Unknown")}
+        - category: {t.get("category", "Unknown")}
+        - first_seen: {t.get("first_seen", "Unknown")}
+        - last_seen: {t.get("last_seen", "Unknown")}
+        - severity: {t.get("severity", "Unknown")}
+        - status: {t.get("status", "Unknown")}
+        """
+    return formatted_threats
 
 
 @mcp.tool()
@@ -337,6 +361,49 @@ def search_for_devices(
     has_more = count >= page_size
     return {
         "data": format_devices(devices),
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "has_more": has_more,
+            "next_page": page + 1,
+        },
+    }
+
+
+@mcp.tool()
+def get_threats(
+    detected_after: Optional[int] = None,
+    mac_address: Optional[str] = None,
+    name: Optional[str] = None,
+    page: int = 0,
+    page_size: int = 20,
+    severity: Optional[Literal["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]] = None,
+    status: Optional[Literal["OPEN", "IN_PROGRESS", "RESOLVED", "SUPPRESSED"]] = None,
+) -> dict:
+    """
+    Returns a paginated list of threats. The response includes:
+    - data: list of threats for the current page
+    - pagination: metadata about pagination
+        - page: current page number
+        - page_size: number of items per page
+        - has_more: true if additional pages exist
+        - next_page: next page number if more pages exist
+
+        If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+    """
+    threats_data = threat.get_threats(
+        detected_after=detected_after,
+        mac_address=mac_address,
+        name=name,
+        page=page,
+        page_size=page_size,
+        severity=severity,
+        status=status,
+    )
+    count = len(threats_data.get("threats", []))
+    has_more = count >= page_size
+    return {
+        "data": format_threats(threats_data),
         "pagination": {
             "page": page,
             "page_size": page_size,

@@ -32,7 +32,7 @@ async def main_mcp_client():
 async def test_list_tools(main_mcp_client: Client[FastMCPTransport]):
     list_tools = await main_mcp_client.list_tools()
     log(list_tools)
-    assert len(list_tools) == 7
+    assert len(list_tools) == 8
 
 
 @pytest.mark.asyncio  # Add this decorator
