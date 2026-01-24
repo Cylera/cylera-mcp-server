@@ -21,36 +21,53 @@ ensure_docker_is_running() {
   return 0
 }
 
-dot_env_help() {
-  echo "It needs to contain the following:" >&2
-  echo "CYLERA_BASE_URL=https://partner.demo.cylera.com/" >&2
-  echo "CYLERA_USERNAME=<username>" >&2
-  echo "CYLERA_PASSWORD=<password>" >&2
+# Track whether secrets come from environment or .env file
+USE_ENV_FILE=false
+
+secrets_help() {
+  echo "Required environment variables:" >&2
+  echo "  CYLERA_BASE_URL=https://partner.demo.cylera.com/" >&2
+  echo "  CYLERA_USERNAME=<username>" >&2
+  echo "  CYLERA_PASSWORD=<password>" >&2
+  echo "" >&2
+  echo "These can be provided via:" >&2
+  echo "  - Environment variables (e.g., using 'doppler run -- $0')" >&2
+  echo "  - A .env file in the current directory" >&2
   return 0
 }
+
 #
-# Ensure there is a .env fail available to support
-# testing because the .env file is not (should not)
-# be part of the Docker image
+# Ensure required secrets are available either as environment
+# variables (e.g., via Doppler) or in a .env file
 #
-ensure_dot_env_file_exists() {
+ensure_secrets_available() {
+  # First, check if all required env vars are already set
+  if [[ -n "${CYLERA_USERNAME:-}" ]] &&
+    [[ -n "${CYLERA_PASSWORD:-}" ]] &&
+    [[ -n "${CYLERA_BASE_URL:-}" ]]; then
+    echo "All required environment variables are present"
+    USE_ENV_FILE=false
+    return 0
+  fi
+
+  # Fall back to checking .env file
   if [[ -f .env ]]; then
     if grep -q "CYLERA_USERNAME" .env &&
       grep -q "CYLERA_PASSWORD" .env &&
       grep -q "CYLERA_BASE_URL" .env; then
-      echo "All required variables are present"
+      echo "All required variables found in .env file"
+      USE_ENV_FILE=true
+      return 0
     else
-      echo "Missing one or more required variables" >&2
-      dot_env_help
+      echo "Missing one or more required variables in .env file" >&2
+      secrets_help
       exit 1
     fi
-  else
-    echo ".env file does not exist" >&2
-    echo "Unable to test the server without one" >&2
-    dot_env_help
-    exit 1
   fi
-  return 0
+
+  echo "No secrets found in environment or .env file" >&2
+  secrets_help
+  exit 1
 }
 #
 # Returns 0 if successful, non-zero if FAILED
@@ -71,7 +88,16 @@ test_docker_image() {
     return 0
   }
   trap cleanup EXIT
-  docker run --env-file .env -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
+
+  if [ "$USE_ENV_FILE" = true ]; then
+    docker run --env-file .env -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
+  else
+    docker run \
+      -e "CYLERA_BASE_URL=${CYLERA_BASE_URL}" \
+      -e "CYLERA_USERNAME=${CYLERA_USERNAME}" \
+      -e "CYLERA_PASSWORD=${CYLERA_PASSWORD}" \
+      -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
+  fi
   grep -q "hostname: TONNMZDPPS" "${TMPFILE}"
   return $?
 }
@@ -83,7 +109,7 @@ test_docker_image() {
 # with the MCP server.
 #
 main() {
-  ensure_dot_env_file_exists
+  ensure_secrets_available
   ensure_docker_is_running
   build_docker_image
   local result=$?
