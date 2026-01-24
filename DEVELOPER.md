@@ -52,6 +52,9 @@ for both  TEST_CYLERA_BASE_URL and CYLERA_BASE_URL:
 
 In addition, you will need credentials (username,password) for this environment to be configured.
 
+You can set these secrets by creating a .env file, or you may prefer to use
+[Dopper](https://www.doppler.com) to store and manage the secrets.
+
 ## Unit tests
 
 The goal of the unit tests contained in [test_cylera_client.py](test_cylera_client.py) is to verify the REST API client
@@ -60,11 +63,16 @@ The goal of the unit tests contained in [test_cylera_client.py](test_cylera_clie
 The tests are run as follows (note this command will also run the component
 tests):
 
-    uv run pytest -v 
+    uv run pytest -v test_cylera_client.py
 
-Or if you want to see the full log output
+If tests are failing, and you want to see more information add the -s option to pytest and set the DEBUG environment variable to 1.
 
-    uv run pytest -v -s
+    export DEBUG=1
+    uv run pytest -v -s test_cylera_client.py
+
+If using [Doppler](https://www.doppler.com) for secrets management instead of storing secrets in a .env file, simply use the "doppler run -- " prefix as follows:
+
+    doppler run -- uv run pytest -v test_cylera_client.py
 
 ## Component tests
 
@@ -77,11 +85,15 @@ Desktop interacts with the MCP server.
 The tests are run as follows (note this command will also run the unit
 tests):
 
-    uv run pytest -v 
+    uv run pytest -v test_mcp_server.py
 
 Or if you want to see the full log output
 
-    uv run pytest -v -s
+    uv run pytest -v -s test_mcp_server.py
+
+If using [Doppler](https://www.doppler.com) for secrets management instead of storing secrets in a .env file, simply use the "doppler run -- " prefix as follows:
+
+    doppler run -- uv run pytest -v test_mcp_server.py
 
 ## Docker image testing
 
@@ -92,7 +104,13 @@ making it available within Docker Desktop. We just need to provide a [Dockerfile
 If changes are made to the Dockerfile, it is important to test the Docker image
 using the [test_docker_container.sh](test_docker_container.sh) script as follows:
 
+When using .env file for storing secrets:
+
     ./test_docker_container.sh
+
+Or, when using [Doppler](https://www.doppler.com) for storing secrets:
+
+    doppler run -- ./test_docker_container.sh
 
 This is just a smoke test to make sure the Docker image has been built and
 will run ok.
@@ -101,7 +119,13 @@ will run ok.
 
 For convenience, you can run all the tests as follows:
 
+When using .env file for storing secrets:
+
     ./test.sh
+
+Or, when using [Doppler](https://www.doppler.com) for storing secrets:
+
+    ./test.sh --use-doppler
 
 This makes it ideal to incorporate into a CI/CD pipeline.
 

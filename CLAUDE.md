@@ -12,11 +12,11 @@ The codebase has a simple three-layer architecture:
 
 1. **cylera_client.py**: REST API client for the Cylera Partner API
    - `CyleraClient`: Handles authentication (token-based with auto-refresh) and HTTP requests
-   - Helper classes (`Inventory`, `Utilization`, `Network`, `Risk`): Organize API endpoints by domain
+   - Helper classes (`Inventory`, `Utilization`, `Network`, `Risk`, `Threat`): Organize API endpoints by domain
    - All API methods return `Dict[str, Any]` containing the raw JSON response from Cylera
 
 2. **server.py**: MCP server implementation using FastMCP
-   - Exposes 7 MCP tools that wrap the Cylera API client
+   - Exposes 8 MCP tools that wrap the Cylera API client: `get_device`, `get_procedures`, `get_device_attributes`, `get_risk_mitigations`, `get_subnets`, `get_vulnerabilities`, `search_for_devices`, `get_threats`
    - Formats API responses into human-readable strings or structured dictionaries
    - Tool functions are decorated with `@mcp.tool()` and called by LLM clients
 
@@ -59,6 +59,11 @@ Run all tests including Docker smoke test:
 ./test.sh
 ```
 
+Run all tests with Doppler secrets management:
+```bash
+./test.sh --use-doppler
+```
+
 ### Code Quality
 
 Linting (Ruff):
@@ -78,6 +83,11 @@ shellcheck *.sh
 ```
 
 ### Security
+
+Security scanning (Bandit):
+```bash
+uvx bandit -c bandit.yaml *.py
+```
 
 Scan for vulnerable dependencies:
 ```bash
