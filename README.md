@@ -410,7 +410,7 @@ Prompt:
 And it will respond with something like this:
 
     I'll retrieve the medium severity threats from Cylera with a page size of 3.
-
+    
     Successfully retrieved medium severity threats from Cylera. Here are the results:
     Medium Severity Threats (Page 1 of multiple)
     Threat 1:
@@ -442,9 +442,9 @@ And it will respond with something like this:
     Status: Open
     First Seen: Nov 22, 2021
     Last Seen: Nov 23, 2021
-
-    Pagination: More medium severity threats are available (has_more: true). Would you like me to retrieve the next page?
     
+    Pagination: More medium severity threats are available (has_more: true). Would you like me to retrieve the next page?
+
 
 ## Installation - the easy button
 
@@ -473,7 +473,8 @@ using Docker Desktop (see above)
 
 ## Configuration
 
-Create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
+Secrets are required to be provided. The values of these secrets can be
+configured using one of two ways. The simplest way is to create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
 
     CYLERA_BASE_URL=https://partner.us1.cylera.com/" # Or https://partner.uk1.cylera.com/ Or https://partner.demo.cylera.com
     CYLERA_USERNAME="<Your username>"
@@ -483,9 +484,13 @@ Create a .env file in the same directory that you cloned the MCP Server for Cyle
     TEST_CYLERA_USERNAME="<Your username>"
     TEST_CYLERA_PASSWORD="<Your password>"
 
+Alternatively, you may prefer to use [Doppler](https://www.doppler.com) to
+store these secrets. This approach is arguably more secure as it avoids storing
+secrets in the clear on the filesystem.
+
 ### If using Claude Desktop
 
-Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv and where you cloned the Cylera MCP server:
+Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv (unless your user name happens to be bill) and where you cloned the Cylera MCP server:
 
 ```lang=json
 {
@@ -502,6 +507,31 @@ Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other
   }
 }
 ```
+
+If you are using Doppler for secrets management instead of storing them in a
+.env file, the configuration will look something like this. Be sure to replace the --pro:
+
+```lang=json
+{
+  "mcpServers": {
+    "Cylera": {
+      "command": "/opt/homebrew/bin/doppler",
+      "args": [
+        "run",
+        "--project", "<Replace with your Doppler project name>",
+        "--config", "<Replace with your Doppler configuration name e.g. dev>",
+        "--",
+        "/Users/Bill/.local/bin/uv",
+        "--directory",
+        "/Users/Bill/repos/cylera-mcp-server",
+        "run",
+        "server.py"
+      ]
+    }
+  }
+}
+```
+
 
 ### If using Gemini CLI
 
@@ -540,7 +570,16 @@ MCP client (test_mcp_server.py).
 
 Run the testsuite as follows:
 
+    uv run pytest -v
+
+If tests are failing, and you want to see more information add the -s option to pytest and set the DEBUG environment variable to 1.
+
+    export DEBUG=1
     uv run pytest -v -s
+
+If using [Doppler](https://www.doppler.com) for secrets management instead of storing secrets in a .env file, simply use the "doppler run -- " prefix as follows:
+
+    doppler run -- uv run pytest -v
 
 ## Coverage
 
