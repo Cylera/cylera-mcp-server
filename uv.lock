@@ -240,6 +240,18 @@ wheels = [
 ]
 
 [[package]]
+name = "cylera-client"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/be/c3/892159e20e02b2473826d750e826ff9bab06ab5389d143fea0f1f0ef7bca/cylera_client-0.2.0.tar.gz", hash = "sha256:a5ff503e050480a6111d9019ca1afbc4532ecf280269eb98a346dd5da9df769b", size = 8179, upload-time = "2026-02-17T20:13:03.199Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6f/8a/212fbd0f826e38560cc50dc1946bec6bb6165540a0fb1aad98659abb24f4/cylera_client-0.2.0-py3-none-any.whl", hash = "sha256:88c621af21abacbfb0aaee38c691ce192fa12ded1651e36e27ea890545d508c4", size = 8424, upload-time = "2026-02-17T20:13:03.947Z" },
+]
+
+[[package]]
 name = "defusedxml"
 version = "0.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -565,6 +577,7 @@ name = "mcp-cylera-server"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "cylera-client" },
     { name = "fastmcp" },
     { name = "mcp", extra = ["cli"] },
     { name = "pydantic" },
@@ -582,6 +595,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cylera-client", specifier = ">=0.2.0" },
     { name = "fastmcp", specifier = ">=2.13.0.2" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.9.4" },
     { name = "pydantic", specifier = ">=2.6.1" },

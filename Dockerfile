@@ -14,7 +14,6 @@ RUN uv sync --frozen --no-dev
 
 # Copy the rest of the application code
 COPY server.py .
-COPY cylera_client.py .
 
 # Create non-root user
 RUN useradd -m -u 1000 mcpuser && \
