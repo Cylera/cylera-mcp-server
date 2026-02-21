@@ -1,6 +1,8 @@
 # MCP Cylera Server
 
-The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cylera](https://cylera.com). Brings context about device inventory, threats, risks and utilization powered by the [Cylera Partner API](https://partner.us1.cylera.com/apidocs/) into an LLM.
+The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cylera](https://cylera.com). Brings context about device inventory, threats, risks and utilization powered by the [Cylera Partner API](https://partner.us1.cylera.com/apidocs/) into an LLM. 
+
+In addition, Cylera offers an alternative way to bring AI assistance into your security and device management workflows: the [Cylera CLI](https://github.com/Cylera/cylera-cli). 
 
 ## Table of Contents
 - [Demo](#demo)
