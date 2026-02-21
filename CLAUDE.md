@@ -21,8 +21,8 @@ The codebase has a simple three-layer architecture:
    - Tool functions are decorated with `@mcp.tool()` and called by LLM clients
 
 3. **Test files**:
-   - `test_cylera_client.py`: Unit tests for the REST API client
    - `test_mcp_server.py`: Component tests that verify the MCP server using a test client
+   - Note: `cylera_client.py` was moved to a separate shared package; its tests live there
 
 ## Development Commands
 
@@ -42,16 +42,6 @@ uv run pytest -v
 Run tests with verbose output:
 ```bash
 uv run pytest -v -s
-```
-
-Run a single test file:
-```bash
-uv run pytest -v test_cylera_client.py
-```
-
-Run a specific test:
-```bash
-uv run pytest -v test_cylera_client.py::TestGetDevice::test_get_device
 ```
 
 Run all tests including Docker smoke test:
@@ -91,7 +81,7 @@ uvx bandit -c bandit.yaml *.py
 
 Scan for vulnerable dependencies:
 ```bash
-uvx pip-audit
+uv run --with pip-audit pip-audit
 ```
 
 Update a specific package:
@@ -135,6 +125,7 @@ Debug with MCP Inspector:
 
 ### Testing Approach
 - Tests depend on specific MAC addresses and data in the demo environment
+- Use Doppler to inject secrets: `doppler run -- uv run pytest -v`
 - The `-v` or `--verbose` flag controls test output verbosity via the `VERBOSE` global variable
 - MCP server tests use `isinstance(result.content[0], TextContent)` to narrow types for pyright
 

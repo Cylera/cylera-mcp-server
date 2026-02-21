@@ -10,7 +10,7 @@ dependencies = [
     "pydantic>=2.6.1",
     "python-dotenv>=1.1.0",
     "pytest-dotenv>=0.5.2",
-    "fastmcp>=2.13.0.2",
+    "fastmcp>=3.0.1",
     "cylera-client>=0.2.0",
 ]
 

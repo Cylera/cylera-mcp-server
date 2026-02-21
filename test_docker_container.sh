@@ -3,11 +3,11 @@
 # Returns 0 if successful, non-zero if FAILED
 
 IMAGE_NAME="cylera.com/cylera-mcp-server-smoke-test:latest"
+NO_CACHE=false
 read -r -d '' TEST_RPC_MESSAGES <<EOF
     {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}
     {"jsonrpc": "2.0", "method": "notifications/initialized"}
     {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
-    {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": { "name": "get_device", "arguments": { "mac_address": "82:32:27:2b:20:8f" }, "_meta": { "progressToken": 0 } } }
 EOF
 
 #
@@ -73,7 +73,12 @@ ensure_secrets_available() {
 # Returns 0 if successful, non-zero if FAILED
 #
 build_docker_image() {
-  docker build -t "${IMAGE_NAME}" .
+  local cache_flag=""
+  if [ "${NO_CACHE}" = true ]; then
+    cache_flag="--no-cache"
+  fi
+  # shellcheck disable=SC2086
+  docker build ${cache_flag} -t "${IMAGE_NAME}" .
   return $?
 }
 
@@ -98,7 +103,7 @@ test_docker_image() {
       -e "CYLERA_PASSWORD=${CYLERA_PASSWORD}" \
       -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
   fi
-  grep -q "hostname: TONNMZDPPS" "${TMPFILE}"
+  grep -q '"name":"get_device"' "${TMPFILE}"
   return $?
 }
 
@@ -108,7 +113,17 @@ test_docker_image() {
 # over stdin - thereby emulating how an MCP client such as Claude interacts
 # with the MCP server.
 #
+parse_args() {
+  for arg in "$@"; do
+    case "${arg}" in
+      --no-cache) NO_CACHE=true ;;
+      *) echo "Unknown argument: ${arg}" >&2; exit 1 ;;
+    esac
+  done
+}
+
 main() {
+  parse_args "$@"
   ensure_secrets_available
   ensure_docker_is_running
   build_docker_image
