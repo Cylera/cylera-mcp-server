@@ -2,7 +2,7 @@
 from sys import stderr
 from fastmcp import FastMCP
 from typing import Optional, Literal
-from cylera_client import CyleraClient, Inventory, Utilization, Risk, Network, Threat
+from cylera_client import CyleraClient, Inventory, Organization, Utilization, Risk, Network, Threat
 from dotenv import load_dotenv
 import os
 
@@ -34,6 +34,7 @@ def create_client():
 mcp = FastMCP("Cylera")
 client = create_client()
 inventory = Inventory(client)
+organization = Organization(client)
 utilization = Utilization(client)
 risk = Risk(client)
 network = Network(client)
@@ -315,6 +316,7 @@ def search_for_devices(
     first_seen_after: Optional[int] = None,
     last_seen_before: Optional[int] = None,
     last_seen_after: Optional[int] = None,
+    attribute_label: Optional[str] = None,
 ) -> dict:
     """
     Search for devices that match the provided search criteria
@@ -336,6 +338,7 @@ def search_for_devices(
         first_seen_after: Finds devices that were first seen after this epoch timestamp
         last_seen_before: Finds devices that were last seen before this epoch timestamp
         last_seen_after: Finds devices that were last seen after this epoch timestamp
+        attribute_label: Partial or complete attribute label
     """
 
     devices = inventory.get_devices(
@@ -356,6 +359,7 @@ def search_for_devices(
         first_seen_after=first_seen_after,
         last_seen_before=last_seen_before,
         last_seen_after=last_seen_after,
+        attribute_label=attribute_label,
     )
     count = len(devices.get("devices", []))
     has_more = count >= page_size
@@ -411,6 +415,43 @@ def get_threats(
             "next_page": page + 1,
         },
     }
+
+
+@mcp.tool()
+def get_organization() -> dict:
+    """Get the current organization associated with the authenticated credentials."""
+    return organization.get_organization()
+
+
+@mcp.tool()
+def get_available_organizations() -> list[dict]:
+    """Get the list of organizations available to switch into."""
+    return organization.get_available_organizations()
+
+
+@mcp.tool()
+def switch_organization(organization_id: str) -> dict:
+    """
+    Switch to a different organization.
+
+    After switching, subsequent tool calls will operate in the context of the
+    new organization. Use get_available_organizations() to get valid IDs.
+
+    Args:
+        organization_id: Organization ID from get_available_organizations()
+    """
+    return organization.switch_organization(organization_id)
+
+
+@mcp.tool()
+def reset_organization() -> dict:
+    """
+    Reset back to the home organization.
+
+    Undoes a previous switch_organization() call. If already in the home
+    organization this is a no-op.
+    """
+    return organization.reset_organization()
 
 
 if __name__ == "__main__":

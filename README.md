@@ -403,7 +403,42 @@ And it will respond with something like this:
     This appears to be a significant security incident requiring immediate
     attention, especially given the medical device classification.
 
-### Example 9: Threats
+### Example 9: Organization switching
+
+Prompt:
+
+    Using Cylera, list the organizations available to me
+
+And it will respond with something like this:
+
+    I'll retrieve the list of organizations available to you using Cylera.
+
+    Here are the organizations available for you to switch into:
+
+    1. Acme Health System (ID: a1b2c3d4-...)
+    2. Regional Medical Center (ID: e5f6g7h8-...)
+    3. Community Clinic Network (ID: i9j0k1l2-...)
+
+    You are currently authenticated to Acme Health System. Would you like me
+    to switch to one of the other organizations?
+
+Then prompt:
+
+    Switch to Regional Medical Center and tell me about their critical vulnerabilities, then switch back
+
+And it will respond with something like this:
+
+    I'll switch to Regional Medical Center, fetch their critical vulnerabilities, then switch back.
+
+    Successfully switched to Regional Medical Center. Now fetching critical vulnerabilities...
+
+    [vulnerability results for Regional Medical Center]
+
+    Now resetting back to your home organization, Acme Health System.
+
+    Successfully reset to home organization.
+
+### Example 10: Threats
 
 Prompt:
 
@@ -589,6 +624,10 @@ The following API endpoints are currently integrated into the MCP server.
 
 | HTTP Method | URL | Description |
 |-------------|-----|-------------|
+| **GET** | `/organization/` | Get current organization - Returns the name of the organization associated with the authenticated credentials. |
+| **GET** | `/organization/available` | Get available organizations - Returns the list of organizations available to switch into. |
+| **POST** | `/organization/switch` | Switch organization - Switches context to a different organization. The current token is invalidated and the next request will re-authenticate in the new organization's context. |
+| **POST** | `/organization/reset` | Reset organization - Resets back to the home organization. This is the inverse of switch. If already in the home organization, the request is a no-op. |
 | **GET** | `/inventory/device` | Get single device - This endpoint returns details about a single IoT device based on mac address. If the supplied MAC is invalid, or doesn't correspond to an IoT device, then the response will be null. |
 | **GET** | `/inventory/devices` | Get many devices - This endpoint returns details about the devices that match the provided search criteria. |
 | **GET** | `/utilization/procedures` | Get procedures - Returns procedure information with optional filtering by procedure name, accession number, device UUID, and completion date. |

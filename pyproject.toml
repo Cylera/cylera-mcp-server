@@ -11,7 +11,7 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "pytest-dotenv>=0.5.2",
     "fastmcp>=3.0.1",
-    "cylera-client>=0.2.0",
+    "cylera-client>=1.1.0",
 ]
 
 [dependency-groups]
