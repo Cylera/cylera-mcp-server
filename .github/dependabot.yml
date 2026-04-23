@@ -9,6 +9,8 @@ updates:
       all:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "python"
 
   - package-ecosystem: "docker"
     directory: "/"
