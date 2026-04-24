@@ -4,7 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "wednesday"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Chicago"
     groups:
       all:
         patterns:
@@ -16,7 +18,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "wednesday"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Chicago"
     groups:
       all:
         patterns:
