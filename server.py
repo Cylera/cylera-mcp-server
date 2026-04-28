@@ -5,7 +5,6 @@ from typing import Optional, Literal
 from cylera_client import CyleraClient, Inventory, Organization, Utilization, Risk, Network, Threat
 from dotenv import load_dotenv
 import os
-import json
 import time
 
 
@@ -451,7 +450,7 @@ def switch_organization(organization_id: str, organization_name: str) -> dict:
     """
     result = organization.switch_organization(organization_id)
     if (result['message'] == "Organization switch queued successfully"): 
-        print(f"switch_organization() - sleeping for 10", file=stderr)
+        print("switch_organization() - sleeping for 10", file=stderr)
         time.sleep(10)  # switch is processed asynchronously 
         switched_org = organization.get_organization()
         if (switched_org["name"] == organization_name):

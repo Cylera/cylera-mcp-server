@@ -497,6 +497,8 @@ Not only does this approach make it easier to connect multiple chat
 applications with multiple MCP servers, it also helps to secure credentials
 needed for configuration by storing them in an embedded vault.
 
+Upgrades are automatic, although be delays in the latest release being available in Docker MCP Registry.
+
 ## Manual Installation
 
 The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
@@ -507,6 +509,14 @@ using Docker Desktop (see above)
 1. Install [Claude Desktop](https://claude.ai/download) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 2. Install [uv](https://github.com/astral-sh/uv) 
 3. Clone the MCP Server for Cylera
+
+To subsequently update to the latest (on Linux or macOS):
+
+```bash
+git pull
+uv sync
+```
+
 
 ## Configuration
 
