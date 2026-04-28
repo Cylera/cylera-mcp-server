@@ -5,6 +5,8 @@ from typing import Optional, Literal
 from cylera_client import CyleraClient, Inventory, Organization, Utilization, Risk, Network, Threat
 from dotenv import load_dotenv
 import os
+import json
+import time
 
 
 def get_env_var(env_var_name: str):
@@ -430,17 +432,36 @@ def get_available_organizations() -> list[dict]:
 
 
 @mcp.tool()
-def switch_organization(organization_id: str) -> dict:
+def switch_organization(organization_id: str, organization_name: str) -> dict:
     """
     Switch to a different organization.
 
     After switching, subsequent tool calls will operate in the context of the
     new organization. Use get_available_organizations() to get valid IDs.
 
+    The switch is handled asynchronously by the Partner API. This introduces
+    a potential timing issue where the switch does not happen immediately.
+    To mitigate the timing issue, the process will wait a few seconds before
+    returning back to the client to give the back-end time to process the
+    request to switch the organization.
+
     Args:
         organization_id: Organization ID from get_available_organizations()
+        organization_name: Organization name from get_available_organizations()
     """
-    return organization.switch_organization(organization_id)
+    result = organization.switch_organization(organization_id)
+    if (result['message'] == "Organization switch queued successfully"): 
+        print(f"switch_organization() - sleeping for 10", file=stderr)
+        time.sleep(10)  # switch is processed asynchronously 
+        switched_org = organization.get_organization()
+        if (switched_org["name"] == organization_name):
+            print(f"switch_organization() - Successfully switched to {organization_name}", file=stderr) 
+            return switched_org
+        else:
+            return {"message": f"The switch to {organization_name} has been queue but has not yet completed - please wait a few seconds"}
+    else:
+        # The call to the API immediately failed so just return the result
+        return result
 
 
 @mcp.tool()
