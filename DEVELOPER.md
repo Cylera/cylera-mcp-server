@@ -207,6 +207,8 @@ To test changes locally:
 To test with an LLM, use the prompt [test_llm_integration.md](test_llm_integration.md). This will prompt
 the LLM to run the tests, verify the response and summarize the test results.
 
+These tests assume the MCP server is configured with a specific environment account. Please reach out to the repo owner for details.
+
 For Claude Desktop, simply drag and drop the [test_llm_integration.md](test_llm_integration.md) file
 into Claude Desktop.
 
@@ -214,3 +216,10 @@ For Gemini, simply prompt:
 
     > Read the prompt contained in @test_llm_integration.md
 
+### Testing the organization switching capability
+
+There is a separate prompt for testing the organization switching capability. The reason why this is separate is because it needs to use a different account and therefore requires a different configuration for the Cylera MCP server. Please reach out to the repo owner for details.
+
+
+For Claude Desktop, simply drag and drop the [test_org_switching_llm_integration.md](test_org_switching_llm_integration.md) file
+into Claude Desktop.
