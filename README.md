@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Cylera_cylera-mcp-server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Cylera_cylera-mcp-server) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Cylera_cylera-mcp-server&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Cylera_cylera-mcp-server) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Cylera_cylera-mcp-server&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Cylera_cylera-mcp-server) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Cylera_cylera-mcp-server&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Cylera_cylera-mcp-server)
+
 # MCP Cylera Server
 
 The official [MCP](https://modelcontextprotocol.io/introduction) Server for [Cylera](https://cylera.com). Brings context about device inventory, threats, risks and utilization powered by the [Cylera Partner API](https://github.com/Cylera/cylera-partner-api) into an LLM. 
