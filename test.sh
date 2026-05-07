@@ -116,11 +116,11 @@ run_pytest() {
 }
 
 lint_python() {
-  uvx ruff check || exit 1
+  uvx --no-build ruff check || exit 1
 }
 
 check_types() {
-  uvx pyright . || exit 1
+  uvx --no-build pyright . || exit 1
 }
 
 lint_shellscripts() {
@@ -129,11 +129,11 @@ lint_shellscripts() {
 }
 
 check_app_security() {
-  uvx bandit -c bandit.yaml ./*.py
+  uvx --no-build bandit -c bandit.yaml ./*.py
 }
 
 check_software_supply_chain_security() {
-  uvx pip-audit
+  uvx --no-build pip-audit
 }
 
 echo "******** Building and testing a Docker image ************"
