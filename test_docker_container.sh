@@ -74,7 +74,7 @@ ensure_secrets_available() {
 #
 build_docker_image() {
   local cache_flag=""
-  if [ "${NO_CACHE}" = true ]; then
+  if [[ "${NO_CACHE}" = true ]]; then
     cache_flag="--no-cache"
   fi
   # shellcheck disable=SC2086
@@ -94,7 +94,7 @@ test_docker_image() {
   }
   trap cleanup EXIT
 
-  if [ "$USE_ENV_FILE" = true ]; then
+  if [[ "$USE_ENV_FILE" = true ]]; then
     docker run --env-file .env -i "${IMAGE_NAME}" <<<"${TEST_RPC_MESSAGES}" >"$TMPFILE" 2>&1
   else
     docker run \
@@ -120,6 +120,7 @@ parse_args() {
       *) echo "Unknown argument: ${arg}" >&2; exit 1 ;;
     esac
   done
+  return 0
 }
 
 main() {
