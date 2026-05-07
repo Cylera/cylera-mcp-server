@@ -151,9 +151,9 @@ jobs:
       - name: Run tests
         run: uv run --frozen pytest # NOSONAR
         env:
-          TEST_CYLERA_BASE_URL: ${{ secrets.TEST_CYLERA_BASE_URL }}
-          TEST_CYLERA_USERNAME: ${{ secrets.TEST_CYLERA_USERNAME }}
-          TEST_CYLERA_PASSWORD: ${{ secrets.TEST_CYLERA_PASSWORD }}
+          CYLERA_BASE_URL: ${{ secrets.CYLERA_BASE_URL }}
+          CYLERA_USERNAME: ${{ secrets.CYLERA_USERNAME }}
+          CYLERA_PASSWORD: ${{ secrets.CYLERA_PASSWORD }}
 
   release:
     runs-on: ubuntu-latest
