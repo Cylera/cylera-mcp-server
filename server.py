@@ -479,6 +479,9 @@ def reset_organization() -> dict:
     return organization.reset_organization()
 
 
-if __name__ == "__main__":
-    # Initialize and run the server
+def main() -> None:
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

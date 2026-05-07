@@ -1,6 +1,6 @@
 [project]
-name = "mcp-cylera-server"
-version = "0.1.0"
+name = "cylera-mcp-server"
+version = "1.2.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = "==3.13.*"
@@ -13,6 +13,12 @@ dependencies = [
     "fastmcp>=3.0.1",
     "cylera-client>=1.2.0",
 ]
+
+[project.scripts]
+cylera-mcp-server = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]
 
 [dependency-groups]
 dev = [
