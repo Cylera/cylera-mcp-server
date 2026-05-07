@@ -97,6 +97,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Print ShellCheck version
+        run: shellcheck --version
       - name: Run ShellCheck
         run: find . -type f -name "*.sh" -exec shellcheck {} +
 
