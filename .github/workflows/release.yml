@@ -30,10 +30,10 @@ jobs:
           INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
           if [ "$INPUT_DRY_RUN" = "true" ]; then
-            PYPI_URL="https://test.pypi.org/pypi/mcp-cylera-server/$INPUT_VERSION/json"
+            PYPI_URL="https://test.pypi.org/pypi/cylera-mcp-server/$INPUT_VERSION/json"
             REGISTRY="TestPyPI"
           else
-            PYPI_URL="https://pypi.org/pypi/mcp-cylera-server/$INPUT_VERSION/json"
+            PYPI_URL="https://pypi.org/pypi/cylera-mcp-server/$INPUT_VERSION/json"
             REGISTRY="PyPI"
           fi
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PYPI_URL")
@@ -67,6 +67,10 @@ jobs:
         uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with:
           enable-cache: true
+      - name: Set up Python
+        run: uv python install
+      - name: Install dependencies
+        run: uv sync --locked --all-extras --dev # NOSONAR
       - name: Run pyright
         run: uvx --no-build pyright==1.1.409
 
@@ -193,7 +197,7 @@ jobs:
           echo "Waiting for TestPyPI to propagate..."
           sleep 30
           for i in $(seq 1 10); do
-            echo "Attempt $i: installing mcp-cylera-server==$INPUT_VERSION from TestPyPI..."
+            echo "Attempt $i: installing cylera-mcp-server==$INPUT_VERSION from TestPyPI..."
             OUTPUT=$(printf '%s\n' \
               '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}' \
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
@@ -201,8 +205,8 @@ jobs:
               | uvx --refresh \
                   --index https://test.pypi.org/simple/ \
                   --index-strategy unsafe-best-match \
-                  --from "mcp-cylera-server==$INPUT_VERSION" \
-                  mcp-cylera-server 2>/dev/null) || true
+                  --from "cylera-mcp-server==$INPUT_VERSION" \
+                  cylera-mcp-server 2>/dev/null) || true
             if echo "$OUTPUT" | grep -q '"name":"get_device"'; then
               echo "Verification successful."
               exit 0
@@ -221,14 +225,14 @@ jobs:
           echo "Waiting for PyPI to propagate..."
           sleep 30
           for i in $(seq 1 10); do
-            echo "Attempt $i: installing mcp-cylera-server==$INPUT_VERSION..."
+            echo "Attempt $i: installing cylera-mcp-server==$INPUT_VERSION..."
             OUTPUT=$(printf '%s\n' \
               '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}' \
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
               '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' \
               | uvx --refresh \
-                  --from "mcp-cylera-server==$INPUT_VERSION" \
-                  mcp-cylera-server 2>/dev/null) || true
+                  --from "cylera-mcp-server==$INPUT_VERSION" \
+                  cylera-mcp-server 2>/dev/null) || true
             if echo "$OUTPUT" | grep -q '"name":"get_device"'; then
               echo "Verification successful."
               exit 0
