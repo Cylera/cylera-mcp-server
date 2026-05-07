@@ -4,7 +4,7 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install uv for package management
-RUN pip install --only-binary :all: uv==0.8.14
+COPY --from=ghcr.io/astral-sh/uv:0.8.14 /uv /bin/uv
 
 # Copy the dependency files
 COPY pyproject.toml uv.lock ./
