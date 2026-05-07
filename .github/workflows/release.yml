@@ -208,7 +208,8 @@ jobs:
                   --index https://test.pypi.org/simple/ \
                   --index-strategy unsafe-best-match \
                   --from "cylera-mcp-server==$INPUT_VERSION" \
-                  cylera-mcp-server 2>/dev/null) || true
+                  cylera-mcp-server) || true
+            echo "Server output: $OUTPUT"
             if echo "$OUTPUT" | grep -q '"name":"get_device"'; then
               echo "Verification successful."
               exit 0
