@@ -87,7 +87,7 @@ build_docker_image() {
 #
 test_docker_image() {
   TMPFILE=$(mktemp) || exit 1
-  # shellcheck disable=SC2329
+  # shellcheck disable=SC2329,SC2317
   cleanup() {
     rm -f "$TMPFILE"
     return 0
