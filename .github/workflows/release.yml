@@ -204,7 +204,8 @@ jobs:
               '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}' \
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
               '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' \
-              | uvx --refresh \
+              | CYLERA_BASE_URL=https://example.com CYLERA_USERNAME=verify CYLERA_PASSWORD=verify \
+                uvx --refresh \
                   --index https://test.pypi.org/simple/ \
                   --index-strategy unsafe-best-match \
                   --from "cylera-mcp-server==$INPUT_VERSION" \
@@ -233,9 +234,10 @@ jobs:
               '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}' \
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
               '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' \
-              | uvx --refresh \
+              | CYLERA_BASE_URL=https://example.com CYLERA_USERNAME=verify CYLERA_PASSWORD=verify \
+                uvx --refresh \
                   --from "cylera-mcp-server==$INPUT_VERSION" \
-                  cylera-mcp-server 2>/dev/null) || true
+                  cylera-mcp-server) || true
             if echo "$OUTPUT" | grep -q '"name":"get_device"'; then
               echo "Verification successful."
               exit 0
