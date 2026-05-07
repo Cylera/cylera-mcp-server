@@ -205,7 +205,7 @@ jobs:
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
               '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' \
               | CYLERA_BASE_URL=https://example.com CYLERA_USERNAME=verify CYLERA_PASSWORD=verify \
-                uvx --refresh \
+                uvx --refresh --no-build \
                   --index https://test.pypi.org/simple/ \
                   --index-strategy unsafe-best-match \
                   --from "cylera-mcp-server==$INPUT_VERSION" \
@@ -235,7 +235,7 @@ jobs:
               '{"jsonrpc": "2.0", "method": "notifications/initialized"}' \
               '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' \
               | CYLERA_BASE_URL=https://example.com CYLERA_USERNAME=verify CYLERA_PASSWORD=verify \
-                uvx --refresh \
+                uvx --refresh --no-build \
                   --from "cylera-mcp-server==$INPUT_VERSION" \
                   cylera-mcp-server) || true
             if echo "$OUTPUT" | grep -q '"name":"get_device"'; then
