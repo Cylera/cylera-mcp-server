@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-npx @modelcontextprotocol/inspector \
+npx --ignore-scripts @modelcontextprotocol/inspector \
   uv \
   --directory . \
   run \
