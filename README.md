@@ -412,13 +412,13 @@ Prompt:
 And it will respond with something like this:
 
     I'll retrieve the list of organizations available to you using Cylera.
-
+    
     Here are the organizations available for you to switch into:
-
+    
     1. Acme Health System (ID: a1b2c3d4-...)
     2. Regional Medical Center (ID: e5f6g7h8-...)
     3. Community Clinic Network (ID: i9j0k1l2-...)
-
+    
     You are currently authenticated to Acme Health System. Would you like me
     to switch to one of the other organizations?
 
@@ -429,13 +429,13 @@ Then prompt:
 And it will respond with something like this:
 
     I'll switch to Regional Medical Center, fetch their critical vulnerabilities, then switch back.
-
+    
     Successfully switched to Regional Medical Center. Now fetching critical vulnerabilities...
-
+    
     [vulnerability results for Regional Medical Center]
-
+    
     Now resetting back to your home organization, Acme Health System.
-
+    
     Successfully reset to home organization.
 
 ### Example 10: Threats
@@ -497,136 +497,51 @@ Not only does this approach make it easier to connect multiple chat
 applications with multiple MCP servers, it also helps to secure credentials
 needed for configuration by storing them in an embedded vault.
 
-Upgrades are automatic, although be delays in the latest release being available in Docker MCP Registry.
+Upgrades are automatic, although delays have been observed from the time a new release of cylera-mcp-server is published to the time it becomes available in the Docker MCP Registry. This delay could range from several days to weeks.
 
 ## Manual Installation
 
-The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download) and [Gemini CLI](https://github.com/google-gemini/gemini-cli). Other configuration options will be supported in the future.
+The following instructions show how to integrate the MCP Server with [Claude Desktop](https://claude.ai/download). Other configuration options will be supported in the future.
 
 Currently, the instructions are a little technical - this is why we recommend
 using Docker Desktop (see above)
 
-1. Install [Claude Desktop](https://claude.ai/download) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
-2. Install [uv](https://github.com/astral-sh/uv) 
-3. Clone the MCP Server for Cylera
+1. Install [Claude Desktop](https://claude.ai/download) 
+2. Install [uv](https://github.com/astral-sh/uv)
 
-To subsequently update to the latest (on Linux or macOS):
+That's it — `uvx` (bundled with `uv`) downloads and runs `cylera-mcp-server` automatically when your MCP client starts. No cloning required.
 
-```bash
-git pull
-uv sync
-```
+To update to the latest release, restart your MCP client. uvx will fetch the newest published version automatically.
 
 
 ## Configuration
 
-Secrets are required to be provided. The values of these secrets can be
-configured using one of two ways. The simplest way is to create a .env file in the same directory that you cloned the MCP Server for Cylera and add the following lines replacing with your own credentials:
-
-    CYLERA_BASE_URL=https://partner.us1.cylera.com/" # Or https://partner.uk1.cylera.com/ Or https://partner.demo.cylera.com
-    CYLERA_USERNAME="<Your username>"
-    CYLERA_PASSWORD="<Your password>"
-    
-    TEST_CYLERA_BASE_URL="https://partner.demo.cylera.com"
-    TEST_CYLERA_USERNAME="<Your username>"
-    TEST_CYLERA_PASSWORD="<Your password>"
-
-Alternatively, you may prefer to use [Doppler](https://www.doppler.com) to
-store these secrets. This approach is arguably more secure as it avoids storing
-secrets in the clear on the filesystem.
+Credentials are required. The simplest approach is to pass them via the `env`
+section of your MCP client config (see examples below). Alternatively, you may
+prefer to use a secrets management solution to store these secrets — this
+avoids keeping credentials in the config file on disk.
 
 ### If using Claude Desktop
 
-Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Modify the paths accordingly to the locations where you installed uv (unless your user name happens to be bill) and where you cloned the Cylera MCP server:
+Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other MCP servers you might have configured. Adjust the path to `uvx` to match where `uv` was installed on your system (run `which uvx` to find it):
 
 ```lang=json
 {
   "mcpServers": {
     "Cylera": {
-      "command": "/Users/bill/.local/bin/uv",
-      "args": [
-        "--directory",
-        "/Users/bill/repos/cylera-mcp-server",
-        "run",
-        "server.py"
-      ]
+      "command": "/Users/bill/.local/bin/uvx",
+      "args": ["cylera-mcp-server"],
+      "env": {
+        "CYLERA_BASE_URL": "https://partner.us1.cylera.com/",
+        "CYLERA_USERNAME": "<Your username>",
+        "CYLERA_PASSWORD": "<Your password>"
+      }
     }
   }
 }
 ```
 
-If you are using Doppler for secrets management instead of storing them in a
-.env file, the configuration will look something like this. Be sure to replace the --pro:
-
-```lang=json
-{
-  "mcpServers": {
-    "Cylera": {
-      "command": "/opt/homebrew/bin/doppler",
-      "args": [
-        "run",
-        "--project", "<Replace with your Doppler project name>",
-        "--config", "<Replace with your Doppler configuration name e.g. dev>",
-        "--",
-        "/Users/Bill/.local/bin/uv",
-        "--directory",
-        "/Users/Bill/repos/cylera-mcp-server",
-        "run",
-        "server.py"
-      ]
-    }
-  }
-}
-```
-
-
-### If using Gemini CLI
-
-Modify ~/.gemini/settings.json changing the paths accordingly to the locations where you installed uv:
-
-```
-{
-  "mcpServers": {
-    "Cylera": {
-      "command": "/Users/bill/.local/bin/uv",
-      "args": [
-        "run",
-        "server.py"
-      ],
-      "cwd": "/Users/bill/repos/cylera-mcp-server"
-    }
-  }
-}
-```
-Test the Gemini configuration by launching gemini. In the start screen, you should 
-see something similar to:
-
-    ...
-    Using: 1 MCP server (ctrl+t to view)
-    ...
-
-If you press Ctrl+t, you should see the Cylera MCP server details.
-
-## Testing
-
-We have unit tests which essentially verify the REST API client
-(test_cylera_client.py) works ok.
-
-In addition, we have tests which verify the MCP server itself works as expected by an
-MCP client (test_mcp_server.py). 
-
-Run the testsuite as follows:
-
-    uv run pytest -v
-
-If tests are failing, and you want to see more information add the -s option to pytest and set the DEBUG environment variable to 1.
-
-    export DEBUG=1
-    uv run pytest -v -s
-
-If using [Doppler](https://www.doppler.com) for secrets management instead of storing secrets in a .env file, simply use the "doppler run -- " prefix as follows:
-
-    doppler run -- uv run pytest -v
+If using a secrets management solution to store the secrets, please refer to the documentation. 
 
 ## Coverage
 
