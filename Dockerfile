@@ -4,13 +4,13 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install uv for package management
-RUN pip install uv
+RUN pip install --only-binary :all: uv==0.8.14
 
 # Copy the dependency files
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies using uv
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --no-build
 
 # Copy the rest of the application code
 COPY server.py .
@@ -31,4 +31,4 @@ USER mcpuser
 # docker run -e CYLERA_USERNAME=your_user -e CYLERA_PASSWORD=your_pass -e CYLERA_BASE_URL=your_url mcp-cylera-server
 
 # Command to run the application
-CMD ["uv", "run", "server.py"]
+CMD ["uv", "run", "--frozen", "--no-build", "server.py"]

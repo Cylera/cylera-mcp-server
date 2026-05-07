@@ -101,6 +101,9 @@ We do not build and publish a Docker image. Docker (the company)
 takes care of this for the purpose of publishing within their MCP Registry
 making it available within Docker Desktop. We just need to provide a [Dockerfile](Dockerfile).
 
+The Dockerfile pins a specific version of uv (e.g. `uv==0.8.14`). When upgrading
+uv, update this version in the Dockerfile to match.
+
 If changes are made to the Dockerfile, it is important to test the Docker image
 using the [test_docker_container.sh](test_docker_container.sh) script as follows:
 
