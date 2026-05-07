@@ -256,6 +256,7 @@ def get_subnets(
 def get_vulnerabilities(
     confidence: Optional[str] = None,
     detected_after: Optional[int] = None,
+    exclude_suppressed_devices: Optional[bool] = None,
     mac_address: Optional[str] = None,
     name: Optional[str] = None,
     page: int = 0,
@@ -274,10 +275,14 @@ def get_vulnerabilities(
         - next_page: next page number if more pages exist
 
         If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+
+    Args:
+        exclude_suppressed_devices: When True, exclude vulnerability instances for suppressed devices.
     """
     vulnerabilities = risk.get_vulnerabilities(
         confidence=confidence,
         detected_after=detected_after,
+        exclude_suppressed_devices=exclude_suppressed_devices,
         mac_address=mac_address,
         name=name,
         page=page,

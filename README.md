@@ -366,7 +366,7 @@ Prompt:
 
     Using Cylera, tell me about critical vulnerabilities
 
-And it will respond with something like this:
+And it will respond with something like this (by default, suppressed devices are included - simply add "excluding suppressed devices" to the prompt to see only devices that have not been suppressed:
 
     I'll help you find information about critical vulnerabilities using the Cylera
     system. Let me search for vulnerabilities with critical severity.
