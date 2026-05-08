@@ -8,6 +8,7 @@ import json
 import pytest
 import pytest_asyncio
 import sys
+from typing import Any
 from fastmcp.client import Client
 from fastmcp.client.transports import FastMCPTransport
 from mcp.types import TextContent
@@ -28,7 +29,7 @@ async def main_mcp_client():
         yield mcp_client
 
 
-def parse_json(result) -> dict | list:
+def parse_json(result) -> Any:
     assert isinstance(result.content[0], TextContent)
     return json.loads(result.content[0].text)
 
