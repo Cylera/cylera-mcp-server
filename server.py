@@ -28,7 +28,14 @@ def create_client():
     username = get_env_var("CYLERA_USERNAME")
     password = get_env_var("CYLERA_PASSWORD")
     base_url = get_env_var("CYLERA_BASE_URL")
-    return CyleraClient(username, password, base_url)
+    client = CyleraClient(username, password, base_url)
+    # The Cylera Partner API WAF (e.g. partner.us1.cylera.com) rejects the default
+    # python-requests User-Agent with 403. Send an identifying UA instead; override
+    # with the CYLERA_USER_AGENT env var if needed.
+    client.session.headers.update(
+        {"User-Agent": os.environ.get("CYLERA_USER_AGENT", "cylera-mcp-server")}
+    )
+    return client
 
 
 # Initialize
