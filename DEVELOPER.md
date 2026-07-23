@@ -198,12 +198,55 @@ To test changes locally:
 
        task build -- --tools cylera-mcp-server
        task catalog -- cylera-mcp-server
-       docker mcp catalog import $PWD/catalogs/cylera-mcp-server/catalog.yaml
 
-   Now re-launch Docker Desktop and see if cylera-mcp-server is there
-   Once tested, Reset your catalog in Docker Desktop with
+   Note: `docker mcp catalog import` no longer exists as of Docker MCP Toolkit
+   CLI v0.43.1 - it's been replaced with an OCI-reference based catalog/profile
+   model. Use the following instead:
 
-       task reset
+       cp catalogs/cylera-mcp-server/catalog.yaml ~/.docker/mcp/catalogs/cylera-test.yaml
+       docker mcp catalog create cylera-test:latest --title "Cylera Test" --server file://cylera-test.yaml
+       docker mcp profile server add default_profile --server catalog://cylera-test:latest/cylera-mcp-server
+
+   Now re-launch Docker Desktop and see if cylera-mcp-server is there.
+   Once tested, remove it again with
+
+       docker mcp profile server remove default_profile cylera-mcp-server
+       docker mcp catalog remove cylera-test:latest
+       rm ~/.docker/mcp/catalogs/cylera-test.yaml
+
+   (`task reset` / `docker mcp catalog reset` no longer exist either - the
+   commands above are the closest equivalent to undoing the local test.)
+
+   If you're testing via Claude Desktop and the log
+   (`~/Library/Logs/Claude/mcp-server-MCP_DOCKER.log` or similar) shows an
+   error like:
+
+       verifying docker image mcp/cylera-mcp-server: image must be referenced
+       by digest; pin the MCP image to a sha256 digest or disable signature
+       verification with --verify-signatures=false
+
+   that's because the gateway verifies image signatures by default, and a
+   locally-built test image has no digest/signature to verify. Add
+   `--verify-signatures=false` to the gateway args in Claude Desktop's config
+   (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+       "MCP_DOCKER": {"command":"docker","args":["mcp","gateway","run","--profile","default_profile","--verify-signatures=false"]}
+
+   Restart Claude Desktop to pick it up. This disables signature verification
+   for every server the gateway loads, not just cylera-mcp-server, so remove
+   the flag again (and restart Claude Desktop) once you're done testing:
+
+       "MCP_DOCKER": {"command":"docker","args":["mcp","gateway","run","--profile","default_profile"]}
+
+3. Full teardown once testing is complete (reverses everything above):
+
+       docker mcp profile server remove default_profile cylera-mcp-server
+       docker mcp catalog remove cylera-test:latest
+       rm ~/.docker/mcp/catalogs/cylera-test.yaml
+
+   Then edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+   to drop `--verify-signatures=false` from the `MCP_DOCKER` args (as shown
+   above) and restart Claude Desktop.
 
 ## Integration testing with an LLM
 
