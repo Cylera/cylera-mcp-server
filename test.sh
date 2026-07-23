@@ -101,26 +101,30 @@ test_docker_container() {
   fi
 }
 
+install_dependencies() {
+  uv sync --locked --all-extras --dev
+}
+
 run_pytest() {
-  PYTEST_ARGS=(-v)
+  PYTEST_ARGS=(-v --cov --cov-report=xml)
   if [[ "$VERBOSE" = true ]]; then
     PYTEST_ARGS+=(-s)
   fi
   if [[ "$USE_DOPPLER" = true ]]; then
-    doppler run -- uv run pytest "${PYTEST_ARGS[@]}" || exit 1
+    doppler run -- uv run --frozen pytest "${PYTEST_ARGS[@]}" || exit 1
   elif [[ "$USE_OP" = true ]]; then
-    op run --environment "$OP_ENVIRONMENT_ID" -- uv run pytest "${PYTEST_ARGS[@]}" || exit 1
+    op run --environment "$OP_ENVIRONMENT_ID" -- uv run --frozen pytest "${PYTEST_ARGS[@]}" || exit 1
   else
-    uv run pytest "${PYTEST_ARGS[@]}" || exit 1
+    uv run --frozen pytest "${PYTEST_ARGS[@]}" || exit 1
   fi
 }
 
 lint_python() {
-  uvx --no-build ruff check || exit 1
+  uvx --no-build ruff==0.15.12 check . || exit 1
 }
 
 check_types() {
-  uvx --no-build pyright . || exit 1
+  uvx --no-build pyright==1.1.409 || exit 1
 }
 
 lint_shellscripts() {
@@ -129,15 +133,17 @@ lint_shellscripts() {
 }
 
 check_app_security() {
-  uvx --no-build bandit -c bandit.yaml ./*.py
+  uvx --no-build bandit==1.9.4 -c bandit.yaml ./*.py
 }
 
 check_software_supply_chain_security() {
-  uvx --no-build pip-audit
+  uv export --no-hashes | uvx --no-build --python 3.13 pip-audit==2.10.0 -r /dev/stdin
 }
 
 echo "******** Building and testing a Docker image ************"
 test_docker_container
+echo "******** Installing dependencies **********"
+install_dependencies
 echo "******** Running pytest **********"
 run_pytest
 echo "******** Running ruff check (linter)  **********"
