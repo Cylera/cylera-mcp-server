@@ -102,7 +102,7 @@ test_docker_container() {
 }
 
 install_dependencies() {
-  uv sync --locked --all-extras --dev
+  uv sync --locked --all-extras --dev --no-build
 }
 
 run_pytest() {
