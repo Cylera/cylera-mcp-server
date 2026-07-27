@@ -206,6 +206,11 @@ def get_procedures(device_uuid: str, page: int = 0, page_size: int = 20) -> dict
         - next_page: next page number if more pages exist
 
         If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+
+    Args:
+        device_uuid: UUID of the device
+        page: Page number, ZERO-INDEXED. The first page is 0, not 1.
+        page_size: Number of items per page
     """
     procedures = utilization.get_procedures(
         device_uuid=device_uuid, page=page, page_size=page_size
@@ -278,6 +283,7 @@ def get_vulnerabilities(
 
     Args:
         exclude_suppressed_devices: When True, exclude vulnerability instances for suppressed devices.
+        page: Page number, ZERO-INDEXED. The first page is 0, not 1.
     """
     vulnerabilities = risk.get_vulnerabilities(
         confidence=confidence,
@@ -334,7 +340,9 @@ def search_for_devices(
         mac_address: Partial or complete MAC address
         model: Device model
         os: Device operating system
-        page: Controls which page of results to return
+        page: Controls which page of results to return. ZERO-INDEXED: the
+            first page is 0, not 1. Passing 1 skips the first page_size
+            results.
         page_size: Controls number of results in each response. Max 100.
         serial_number: Complete serial number of device
         since_last_seen: [DEPRECATED] Number of seconds since activity from device was last detected
@@ -400,6 +408,10 @@ def get_threats(
         - next_page: next page number if more pages exist
 
         If `pagination.has_more` is true, the LLM should inform the user that more data exists and offer to fetch the next page.
+
+    Args:
+        page: Page number, ZERO-INDEXED. The first page is 0, not 1.
+        page_size: Number of items per page
     """
     threats_data = threat.get_threats(
         detected_after=detected_after,
