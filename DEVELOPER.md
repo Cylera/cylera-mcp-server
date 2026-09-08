@@ -3,7 +3,7 @@
 To scan for packages with known vulnerabilities, pip-audit should be run as
 follows:
 
-    uvx pip-audit
+    uv export --no-hashes | uvx --no-build --python 3.13 pip-audit==2.10.0 -r /dev/stdin
 
 If vulnerabilities are discovered, dependencies can be updates using uv as
 follows:

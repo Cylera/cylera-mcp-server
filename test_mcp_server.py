@@ -38,7 +38,7 @@ def parse_json(result) -> Any:
 async def test_list_tools(main_mcp_client: Client[FastMCPTransport]):
     list_tools = await main_mcp_client.list_tools()
     log(list_tools)
-    assert len(list_tools) == 12
+    assert len(list_tools) == 13
 
 
 @pytest.mark.asyncio
@@ -130,6 +130,22 @@ async def test_search_for_devices(main_mcp_client: Client[FastMCPTransport]):
     assert "data" in data
     assert "pagination" in data
     assert "Philips" in data["data"]
+
+
+@pytest.mark.asyncio
+async def test_search_excluded_devices(main_mcp_client: Client[FastMCPTransport]):
+    result = await main_mcp_client.call_tool(
+        "search_excluded_devices",
+        {"page_size": 5},
+    )
+    data = parse_json(result)
+    log(data)
+    assert "data" in data
+    assert "pagination" in data
+    pagination = data["pagination"]
+    assert pagination["page_size"] == 5
+    assert "has_more" in pagination
+    assert "next_page" in pagination
 
 
 @pytest.mark.asyncio

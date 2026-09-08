@@ -389,6 +389,70 @@ def search_for_devices(
 
 
 @mcp.tool()
+def search_excluded_devices(
+    device_class: Optional[str] = None,
+    device_type: Optional[str] = None,
+    vendor: Optional[str] = None,
+    model: Optional[str] = None,
+    hostname: Optional[str] = None,
+    ip_address: Optional[str] = None,
+    mac_address: Optional[str] = None,
+    first_seen_before: Optional[int] = None,
+    first_seen_after: Optional[int] = None,
+    last_seen_before: Optional[int] = None,
+    last_seen_after: Optional[int] = None,
+    page: int = 0,
+    page_size: int = 20,
+) -> dict:
+    """
+    Search for excluded (unclassified) devices that match the provided
+    search criteria. Excluded devices have not been assigned a device
+    class/type by Cylera's classification engine.
+
+    Args:
+        device_class: Device class (e.g. Medical)
+        device_type: Device type (e.g. Workstation)
+        vendor: Device vendor or manufacturer (e.g. Lenovo)
+        model: Device model (e.g. Apple Mac Pro)
+        hostname: Complete hostname of device
+        ip_address: Partial or complete IP or subnet
+        mac_address: Partial or complete MAC address
+        first_seen_before: Finds devices that were first seen before this epoch timestamp
+        first_seen_after: Finds devices that were first seen after this epoch timestamp
+        last_seen_before: Finds devices that were last seen before this epoch timestamp
+        last_seen_after: Finds devices that were last seen after this epoch timestamp
+        page: Page number, ZERO-INDEXED. The first page is 0, not 1.
+        page_size: Controls number of results in each response. Max 100.
+    """
+    devices = inventory.get_excluded_devices(
+        device_class=device_class,
+        device_type=device_type,
+        vendor=vendor,
+        model=model,
+        hostname=hostname,
+        ip_address=ip_address,
+        mac_address=mac_address,
+        first_seen_before=first_seen_before,
+        first_seen_after=first_seen_after,
+        last_seen_before=last_seen_before,
+        last_seen_after=last_seen_after,
+        page=page,
+        page_size=page_size,
+    )
+    count = len(devices.get("devices", []))
+    has_more = count >= page_size
+    return {
+        "data": format_devices(devices),
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "has_more": has_more,
+            "next_page": page + 1,
+        },
+    }
+
+
+@mcp.tool()
 def get_threats(
     detected_after: Optional[int] = None,
     mac_address: Optional[str] = None,

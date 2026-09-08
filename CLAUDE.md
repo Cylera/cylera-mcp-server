@@ -16,7 +16,7 @@ The codebase has a simple three-layer architecture:
    - All API methods return `Dict[str, Any]` containing the raw JSON response from Cylera
 
 2. **server.py**: MCP server implementation using FastMCP
-   - Exposes 8 MCP tools that wrap the Cylera API client: `get_device`, `get_procedures`, `get_device_attributes`, `get_risk_mitigations`, `get_subnets`, `get_vulnerabilities`, `search_for_devices`, `get_threats`
+   - Exposes 13 MCP tools that wrap the Cylera API client: `get_device`, `get_procedures`, `get_device_attributes`, `get_risk_mitigations`, `get_subnets`, `get_vulnerabilities`, `search_for_devices`, `search_excluded_devices`, `get_threats`, `get_organization`, `get_available_organizations`, `switch_organization`, `reset_organization`
    - Formats API responses into human-readable strings or structured dictionaries
    - Tool functions are decorated with `@mcp.tool()` and called by LLM clients
 
