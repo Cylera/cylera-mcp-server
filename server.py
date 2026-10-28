@@ -21,6 +21,7 @@ Runs one of two ways:
 
 import argparse
 import threading
+import sys
 from sys import stderr
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
@@ -52,7 +53,7 @@ def get_env_var(env_var_name: str):
             }' is not set or is empty",
             file=stderr,
         )
-        exit(1)
+        sys.exit(1)
     return str(value)
 
 
@@ -664,7 +665,7 @@ def _remote_config() -> dict:
             "CYLERA_PASSWORD must not be set: everyone who connected would act as that user.",
             file=stderr,
         )
-        exit(1)
+        sys.exit(1)
     return {
         "base_url": get_env_var("CYLERA_BASE_URL"),
         "authkit_domain": get_env_var("WORKOS_AUTHKIT_DOMAIN"),
