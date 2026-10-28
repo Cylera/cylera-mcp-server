@@ -515,6 +515,9 @@ That's it — `uvx` (bundled with `uv`) downloads and runs `cylera-mcp-server` a
 
 To update to the latest release, restart your MCP client. uvx will fetch the newest published version automatically.
 
+The Cylera MCP Server needs Python 3.13. `--python 3.13` in the configuration below makes uvx use
+it, downloading it if needed, even when a newer Python is installed.
+
 
 ## Configuration
 
@@ -532,7 +535,7 @@ Go to Claude->Settings and Edit Config adding the Cylera MCP Server to any other
   "mcpServers": {
     "Cylera": {
       "command": "/Users/bill/.local/bin/uvx",
-      "args": ["cylera-mcp-server"],
+      "args": ["--python", "3.13", "cylera-mcp-server"],
       "env": {
         "CYLERA_BASE_URL": "https://partner.us1.cylera.com/",
         "CYLERA_USERNAME": "<Your username>",
