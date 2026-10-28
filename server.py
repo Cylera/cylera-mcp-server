@@ -1,8 +1,44 @@
 # server.py
+"""
+Cylera MCP Server.
+
+Runs one of two ways:
+
+  - Local (the default): stdio, for one person on their own machine,
+    signing in to the Partner API with CYLERA_USERNAME, CYLERA_PASSWORD
+    and CYLERA_BASE_URL.
+  - Remote (--remote, or CYLERA_MCP_MODE=remote): streamable HTTP, hosted
+    for many people. WorkOS AuthKit is the OAuth authorization server: an
+    MCP client such as Claude Code signs its user in through AuthKit and
+    sends the WorkOS token with each request. This server only verifies
+    it (AuthKitProvider) and, for each tool call, exchanges it at the
+    Partner API's POST /auth/token_exchange for that user's Cylera token,
+    never forwarding the WorkOS token itself (the MCP specification
+    forbids it). Configured with CYLERA_BASE_URL (the region's Partner
+    API), WORKOS_AUTHKIT_DOMAIN and MCP_PUBLIC_BASE_URL (this server's
+    public URL, without /mcp); optionally MCP_HOST and PORT.
+"""
+
+import argparse
+import threading
+import sys
 from sys import stderr
 from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
+from fastmcp.server.auth.providers.workos import AuthKitProvider
+from fastmcp.server.dependencies import get_access_token
 from typing import Optional, Literal
-from cylera_client import CyleraClient, Inventory, Organization, Utilization, Risk, Network, Threat
+from cylera_client import (
+    CyleraClient,
+    CyleraExchangeError,
+    Inventory,
+    Organization,
+    Utilization,
+    Risk,
+    Network,
+    Threat,
+    exchange_workos_token,
+)
 from dotenv import load_dotenv
 import os
 import time
@@ -17,7 +53,7 @@ def get_env_var(env_var_name: str):
             }' is not set or is empty",
             file=stderr,
         )
-        exit(1)
+        sys.exit(1)
     return str(value)
 
 
@@ -31,15 +67,76 @@ def create_client():
     return CyleraClient(username, password, base_url)
 
 
-# Initialize
+# Initialize. Auth is attached by main() in remote mode.
 mcp = FastMCP("Cylera")
-client = create_client()
-inventory = Inventory(client)
-organization = Organization(client)
-utilization = Utilization(client)
-risk = Risk(client)
-network = Network(client)
-threat = Threat(client)
+
+# Set by main() in remote mode: the region's Partner API.
+remote_base_url: Optional[str] = None
+
+# Local mode's one client, created on first use, so importing this module
+# needs no credentials.
+_local_client: Optional[CyleraClient] = None
+_local_client_lock = threading.Lock()
+
+REFUSED_MESSAGE = (
+    "Cylera didn't accept the WorkOS account you signed in with. If it's yours, sign in to "
+    "the Cylera Portal once to finish setting up your account, or ask your Cylera "
+    "administrator for access. If it's the wrong account, sign out of WorkOS in your "
+    "browser and connect again."
+)
+UNSUPPORTED_MESSAGE = "This Cylera region doesn't support signing in through WorkOS yet."
+
+
+def _exchange(base_url: str, workos_token: str) -> str:
+    """The signed-in user's Cylera token, for a WorkOS token, with errors a
+    person can act on."""
+    try:
+        return exchange_workos_token(base_url, workos_token)
+    except CyleraExchangeError as e:
+        raise ToolError(REFUSED_MESSAGE if e.status_code == 401 else UNSUPPORTED_MESSAGE)
+
+
+def current_client() -> CyleraClient:
+    """The client for this tool call: in remote mode, the signed-in user's,
+    exchanging their WorkOS token whenever it needs a Cylera token (an
+    exchanged token expires with the WorkOS token, and one from before an
+    organization switch keeps acting on the old organization); in local
+    mode, the one shared client."""
+    global _local_client
+    if remote_base_url is not None:
+        access_token = get_access_token()
+        if access_token is None:
+            raise ToolError("Not signed in to Cylera.")
+        base_url, workos_token = remote_base_url, access_token.token
+        return CyleraClient(token_provider=lambda: _exchange(base_url, workos_token), base_url=base_url)
+    with _local_client_lock:
+        if _local_client is None:
+            _local_client = create_client()
+        return _local_client
+
+
+def inventory() -> Inventory:
+    return Inventory(current_client())
+
+
+def organization() -> Organization:
+    return Organization(current_client())
+
+
+def utilization() -> Utilization:
+    return Utilization(current_client())
+
+
+def risk() -> Risk:
+    return Risk(current_client())
+
+
+def network() -> Network:
+    return Network(current_client())
+
+
+def threat() -> Threat:
+    return Threat(current_client())
 
 
 def format_device(device):
@@ -187,7 +284,7 @@ def format_threats(threats_data) -> str:
 @mcp.tool()
 def get_device(mac_address: str) -> str:
     """Get details about a device by MAC address"""
-    device_data = inventory.get_device(mac_address)
+    device_data = inventory().get_device(mac_address)
     device = device_data.get("device", {})
     return format_device(device)
 
@@ -212,7 +309,7 @@ def get_procedures(device_uuid: str, page: int = 0, page_size: int = 20) -> dict
         page: Page number, ZERO-INDEXED. The first page is 0, not 1.
         page_size: Number of items per page
     """
-    procedures = utilization.get_procedures(
+    procedures = utilization().get_procedures(
         device_uuid=device_uuid, page=page, page_size=page_size
     )
     count = len(procedures.get("procedures", []))
@@ -231,14 +328,14 @@ def get_procedures(device_uuid: str, page: int = 0, page_size: int = 20) -> dict
 @mcp.tool()
 def get_device_attributes(mac_address: str) -> list[dict]:
     """Get attributes for a defive by MAC address"""
-    device_attributes = inventory.get_device_attributes(mac_address)
+    device_attributes = inventory().get_device_attributes(mac_address)
     return format_device_attributes(device_attributes)
 
 
 @mcp.tool()
 def get_risk_mitigations(cve_reference: str) -> str:
     """Get risk mitigations for a given CVE reference"""
-    risk_mitigations = risk.get_mitigations(vulnerability=cve_reference)
+    risk_mitigations = risk().get_mitigations(vulnerability=cve_reference)
     return format_risk_mitigations(risk_mitigations)
 
 
@@ -249,7 +346,7 @@ def get_subnets(
     vlan: Optional[int] = None,
 ) -> str:
     """Get a list of subnets."""
-    subnets = network.get_subnets(
+    subnets = network().get_subnets(
         cidr_range=cidr_range,
         description=description,
         vlan=vlan,
@@ -285,7 +382,7 @@ def get_vulnerabilities(
         exclude_suppressed_devices: When True, exclude vulnerability instances for suppressed devices.
         page: Page number, ZERO-INDEXED. The first page is 0, not 1.
     """
-    vulnerabilities = risk.get_vulnerabilities(
+    vulnerabilities = risk().get_vulnerabilities(
         confidence=confidence,
         detected_after=detected_after,
         exclude_suppressed_devices=exclude_suppressed_devices,
@@ -355,7 +452,7 @@ def search_for_devices(
         attribute_label: Partial or complete attribute label
     """
 
-    devices = inventory.get_devices(
+    devices = inventory().get_devices(
         aetitle=aetitle,
         device_class=device_class,
         hostname=hostname,
@@ -424,7 +521,7 @@ def search_excluded_devices(
         page: Page number, ZERO-INDEXED. The first page is 0, not 1.
         page_size: Controls number of results in each response. Max 100.
     """
-    devices = inventory.get_excluded_devices(
+    devices = inventory().get_excluded_devices(
         device_class=device_class,
         device_type=device_type,
         vendor=vendor,
@@ -477,7 +574,7 @@ def get_threats(
         page: Page number, ZERO-INDEXED. The first page is 0, not 1.
         page_size: Number of items per page
     """
-    threats_data = threat.get_threats(
+    threats_data = threat().get_threats(
         detected_after=detected_after,
         mac_address=mac_address,
         name=name,
@@ -502,13 +599,13 @@ def get_threats(
 @mcp.tool()
 def get_organization() -> dict:
     """Get the current organization associated with the authenticated credentials."""
-    return organization.get_organization()
+    return organization().get_organization()
 
 
 @mcp.tool()
 def get_available_organizations() -> list[dict]:
     """Get the list of organizations available to switch into."""
-    return organization.get_available_organizations()
+    return organization().get_available_organizations()
 
 
 @mcp.tool()
@@ -529,11 +626,14 @@ def switch_organization(organization_id: str, organization_name: str) -> dict:
         organization_id: Organization ID from get_available_organizations()
         organization_name: Organization name from get_available_organizations()
     """
-    result = organization.switch_organization(organization_id)
+    # One client for the switch and the check, so the check uses a token
+    # from after the switch.
+    org_api = organization()
+    result = org_api.switch_organization(organization_id)
     if (result['message'] == "Organization switch queued successfully"): 
         print("switch_organization() - sleeping for 10", file=stderr)
         time.sleep(10)  # switch is processed asynchronously 
-        switched_org = organization.get_organization()
+        switched_org = org_api.get_organization()
         if (switched_org["name"] == organization_name):
             print(f"switch_organization() - Successfully switched to {organization_name}", file=stderr) 
             return switched_org
@@ -552,11 +652,48 @@ def reset_organization() -> dict:
     Undoes a previous switch_organization() call. If already in the home
     organization this is a no-op.
     """
-    return organization.reset_organization()
+    return organization().reset_organization()
+
+
+def _remote_config() -> dict:
+    """Remote mode's settings, or exit with what's missing. Refuses a stored
+    password: every person who connected would act as that one user."""
+    load_dotenv()
+    if os.environ.get("CYLERA_USERNAME") or os.environ.get("CYLERA_PASSWORD"):
+        print(
+            "Error: remote mode signs each person in through WorkOS, so CYLERA_USERNAME and "
+            "CYLERA_PASSWORD must not be set: everyone who connected would act as that user.",
+            file=stderr,
+        )
+        sys.exit(1)
+    return {
+        "base_url": get_env_var("CYLERA_BASE_URL"),
+        "authkit_domain": get_env_var("WORKOS_AUTHKIT_DOMAIN"),
+        "public_base_url": get_env_var("MCP_PUBLIC_BASE_URL").rstrip("/"),
+        "host": os.environ.get("MCP_HOST", "127.0.0.1"),
+        "port": int(os.environ.get("PORT", "8124")),
+    }
 
 
 def main() -> None:
-    mcp.run(transport="stdio")
+    global remote_base_url
+    parser = argparse.ArgumentParser(description="Cylera MCP Server")
+    parser.add_argument(
+        "--remote",
+        action="store_true",
+        help="serve over HTTP for many people, signing each in through WorkOS (see the module docstring)",
+    )
+    args = parser.parse_args()
+    if not (args.remote or os.environ.get("CYLERA_MCP_MODE") == "remote"):
+        mcp.run(transport="stdio")
+        return
+
+    config = _remote_config()
+    remote_base_url = config["base_url"]
+    mcp.auth = AuthKitProvider(authkit_domain=config["authkit_domain"], base_url=config["public_base_url"])
+    # Stateless, so instances behind a load balancer don't need to share
+    # sessions: each request carries its own WorkOS token.
+    mcp.run(transport="http", host=config["host"], port=config["port"], path="/mcp", stateless_http=True)
 
 
 if __name__ == "__main__":
