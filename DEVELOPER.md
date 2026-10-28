@@ -145,6 +145,37 @@ launching this script:
 
 This might be handy for debugging.
 
+## Remote mode (OAuth through WorkOS)
+
+Remote mode serves the same tools over HTTP, for many people at once, so they don't install
+anything. Each person connects with their MCP client's own sign-in:
+
+    claude mcp add --transport http cylera <URL>/mcp
+
+WorkOS AuthKit is the OAuth authorization server, and this server only verifies the WorkOS token
+each request carries. For every tool call, it exchanges that token at the Partner API's
+`POST /auth/token_exchange` for that person's Cylera token. The WorkOS token itself never reaches
+the Partner API.
+
+The real Partner API doesn't have `/auth/token_exchange` yet, so remote mode works only against
+Cylera's internal identity management prototype for now. With the prototype running on port
+8123, and its WorkOS environment's MCP resource indicator set to `http://localhost:8124/mcp`:
+
+```bash
+CYLERA_MCP_MODE=remote CYLERA_USERNAME= CYLERA_PASSWORD= \
+CYLERA_BASE_URL=http://127.0.0.1:8123/ \
+WORKOS_AUTHKIT_DOMAIN=<the prototype's AuthKit domain> \
+MCP_PUBLIC_BASE_URL=http://localhost:8124 \
+uv run server.py
+claude mcp add --transport http cylera-remote http://localhost:8124/mcp
+```
+
+Remote mode refuses to start with a stored password, since everyone who connected would act as
+that user. The empty `CYLERA_USERNAME` and `CYLERA_PASSWORD` override the ones in `.env`. Only the
+organization tools work against the prototype, which has no device routes.
+
+`test_remote_mode.py` covers remote mode without a network or credentials.
+
 ## Publishing to the MCP Registry
 
 In compliance with [Docker's guidelines](https://github.com/docker/mcp-registry/blob/main/CONTRIBUTING.md), a fork is maintained by Cylera [fork](https://github.com/Cylera/mcp-registry) of the [Official Docker MCP Registry](https://github.com/docker/mcp-registry).

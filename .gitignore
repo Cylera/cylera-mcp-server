@@ -6,6 +6,8 @@ dist/
 wheels/
 *.egg-info
 .env
+# Any other env file, e.g. one per test account: they hold credentials.
+*.env
 .gemini
 .coverage
 coverage.xml
